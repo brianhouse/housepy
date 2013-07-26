@@ -5,7 +5,6 @@ housepy -- personal utility library for Python 3
 Notes
 -----
 
-
 pip for python3 is pip-3.2
 
 
