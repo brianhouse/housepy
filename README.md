@@ -1,5 +1,6 @@
-housepy -- personal utility library for Python 3
-================================================
+housepy
+=======
+personal utility library for Python 3
 
 
 Notes
