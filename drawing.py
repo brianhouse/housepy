@@ -1,56 +1,16 @@
 #! /usr/bin/env python
 
-# 
-# Copyright (c) 2011 Brian House
-# 
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# 
-# See <http://www.gnu.org/licenses/gpl.html> for details.
-# 
-
 """
 
-Description
-===========
+A port of the aggdraw wrapper in Python 2.X for cairo and Python 3
 
-A simple drawing interface for Python that wraps PIL and aggdraw.
+need:
+line, curve, arc, rect, text
 
-For slightly more information, see http://blog.brianhouse.net/post/6836163797
+hsv / color handling
+margin
 
-
-Requirements
-============
-
-Python 2.6+
-PIL http://www.pythonware.com/products/pil/
-aggdraw http://effbot.org/zone/aggdraw-index.htm (for 64-bit systems (eg OSX), use https://bitbucket.org/2degrees/aggdraw-64bits/src)
-
-
-Using
-=====
-
-See the __main__ function below for a quick example.
-
-Note on colors:
-Colors are specified as a tuple of R, G, B, A values in the default mode and H, S, V, A if hsv was indicated in the class constructor. Alpha is optional.
-If ints are used, 0-255 is assumed, whereas floats imply a 0-1 scale. Values can be mixed.
-'stroke' refers to the lines/borders of a shape, with the supplied 'thickness'. To draw shapes without borders, set thickness to 0 and specify a fill.
-
-Also, note that, unlike Processing or Canvas, this is not a state machine -- values must be specified with every command.
-
-
-Todo
-====
-
-Polygons / polylines
-Rotated shapes
+http://www.cairographics.org/samples/
 
 
 """
@@ -117,8 +77,10 @@ class Context(object):
             Specify both radius_x and radius_y to make ellipses; fill to make a pie slice.
         """
         self._ctx.set_source_rgba(*stroke)
-        if not radius_y:
+        if radius_y is None:
             radius_y = radius_x
+        print(radius_x)
+        print(radius_y)
         # if fill:    
         #     fill = self._handle_color(fill)
         #     brush = aggdraw.Brush(fill[:3], fill[3]) 
@@ -147,7 +109,7 @@ class Context(object):
         self._ctx.restore()                
         self._ctx.save()
 
-
+        # need fill
 
         # 
         # self._verify_context()
@@ -165,8 +127,10 @@ class Context(object):
 
     def output(self, filename=None):
         self._ctx.stroke() # commit to surface
-        if filename is None:
-            filename = "%s.png" % int(time.time() * 1000)
+        if filename is None or '.' not in filename:
+            if filename is None:
+                filename = '' 
+            filename = "%s%s.png" % (filename, int(time.time() * 1000))
         self._surface.write_to_png(filename) # write to file
         subprocess.call(["open", filename])
 
