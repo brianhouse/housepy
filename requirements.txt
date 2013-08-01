@@ -1,0 +1,4 @@
+PyYAML>=3.10
+beautifulsoup4>=4.2.1
+distribute>=0.6.34
+numpy>=1.6.2

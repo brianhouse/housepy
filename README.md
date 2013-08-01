@@ -1,13 +1,10 @@
 housepy
 =======
-personal utility library for Python 3
+Personal utility library for Python 3
 
 
 Notes
 -----
-
-pip for python3 is pip-3.2
-
 
 #### pyglet
 
@@ -27,6 +24,14 @@ python3 ./waf configure
 python3 ./waf build
 python3 ./waf install
 
+
+#### other
+
+pip for python3 is pip-3.2
+see requirements.txt
+to check:
+
+    $ pip freeze
 
 
 
