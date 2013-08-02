@@ -42,10 +42,10 @@ def project(pt):
 
 def geohash_encode(pt):
     """Geohash a point (lon, lat)"""
-    from lib import geohash
+    import geohash
     return geohash.encode(pt[1], pt[0])
     
 def geohash_decode(string):
     """Decode a geohash into a point (lon, lat)"""
-    from lib import geohash
+    import geohash
     return geohash.decode(string)
