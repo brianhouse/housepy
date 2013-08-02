@@ -3,6 +3,13 @@ housepy
 Personal utility library for Python 3
 
 
+Usage
+-----
+Place or symlink in your project directory.
+
+    from housepy import log, config
+
+
 Installation
 ------------
 
@@ -26,17 +33,21 @@ note on Pyglet install: alpha download from the site didnt work. repository down
     brew install cairo
     export PKG_CONFIG_PATH="/opt/X11/lib/pkgconfig:$PKG_CONFIG_PATH"
 
-had to manually disable (temporarily rename) /usr/bin/python to get it to install with python3
+had to manually disable (temporarily rename) system python to get it to install with python3
 
+    sudo mv /usr/bin/python /usr/bin/python_
+    git clone git://git.cairographics.org/git/pycairo
+    cd pycairo
     python3 ./waf configure
     python3 ./waf build
     python3 ./waf install
+    sudo mv /usr/bin/python_ /usr/bin/python
 
 
 #### other
 to check installed modules:
 
-    pip freeze
+    pip-3.3 freeze
 
 
 

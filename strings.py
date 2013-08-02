@@ -86,7 +86,7 @@ def unslugify(value):
 def random_string(length=64):
     import random
     rs = []
-    for i in xrange(length):
+    for i in range(length):
         rs.append(random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"))
     return ''.join(rs)        
     

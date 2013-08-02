@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-import os, re, filters, strings, datetime, hashlib, oauth2, __main__
+from . import config, log, strings
+import os, re, datetime, hashlib, __main__
 import tornado.auth
 import tornado.httpserver
 import tornado.ioloop
@@ -10,7 +11,30 @@ import unicodedata
 import json as jsonlib
 import jinja2
 from jinja2 import Environment, FileSystemLoader
-from housepy import config, log
+
+
+"""
+    Tornado server!
+    Usage:
+
+    class Home(server.Handler):
+        def get(self):
+            return self.text("OK")
+    handlers = [
+        (r"/", Home),
+    ]    
+    start(handlers)
+
+"""
+
+
+"""Include all functions in string module as jinja2 filters"""
+filters = {}
+for function_name in dir(strings):
+    if '__' in function_name:
+        continue
+    filters[function_name] = eval("strings." + function_name)
+# note nice built-in filters: int, e (html_escape)
 
 class Application(tornado.web.Application):
     
@@ -18,67 +42,61 @@ class Application(tornado.web.Application):
                 
         settings = {
             'template_path': os.path.abspath(os.path.join(os.path.dirname(__main__.__file__), "templates")),
-            'static_path': os.path.abspath(os.path.join(os.path.dirname(__main__.__file__), "static"))
+            'static_path': os.path.abspath(os.path.join(os.path.dirname(__main__.__file__), "static")),
+            'cookie_secret': strings.random_string(32), # is this going to break things? in theory, it just means users get de-authenticated if the server restarts.
+            'xsrf_cookies': True
         }
         
-        if 'tornado' in config:
-            tornado_settings = config['tornado']
+        if 'server' in config:
+            tornado_settings = config['server']
             for key in list(tornado_settings.keys()):
                 settings[key] = tornado_settings[key]        
 
         tornado.web.Application.__init__(self, handlers, **settings)
         
-        if 'mysql' in config:
-            log.info("--> tornado initializing mysql")
-            import database
-            try:
-                self.db = database.Connection()
-            except Exception as e:
-                log.error("Could not connect to MySQL: %s" % log.exc(e))   
-        elif 'mongo' in config:    
-            log.info("--> tornado initializing mongo")
-            try:
-                mongo = config['mongo']
-                import pymongo                
-                connection = pymongo.Connection(mongo['host'])
-                self.db = connection[mongo['database']]
-            except Exception as e:
-                log.error("Could not connect to mongo: %s" % log.exc(e))
-        if 'redis' in config:
-            log.info("--> tornado initializing redis")
-            import redis
-            self.redis = redis.StrictRedis()
-        if 'memcache' in config:
-            log.info("--> torando initializing memcache")
-            import memcache
-            self.cache = memcache.Client([config['memcache']['address'] + ":" + str(config['memcache']['port'])])
+        # # not ported or tested with Python 3
+        # if 'mysql' in config:
+        #     log.info("--> server initializing mysql")
+        #     import database
+        #     try:
+        #         self.db = database.Connection()
+        #     except Exception as e:
+        #         log.error("Could not connect to MySQL: %s" % log.exc(e))   
+        # elif 'mongo' in config:    
+        #     log.info("--> server initializing mongo")
+        #     try:
+        #         mongo = config['mongo']
+        #         import pymongo                
+        #         connection = pymongo.Connection(mongo['host'])
+        #         self.db = connection[mongo['database']]
+        #     except Exception as e:
+        #         log.error("Could not connect to mongo: %s" % log.exc(e))
+        # if 'redis' in config:
+        #     log.info("--> tornado initializing redis")
+        #     import redis
+        #     self.redis = redis.StrictRedis()
+        # if 'memcache' in config:
+        #     log.info("--> torando initializing memcache")
+        #     import memcache
+        #     self.cache = memcache.Client([config['memcache']['address'] + ":" + str(config['memcache']['port'])])
             
-        self.jobs = None    
-        if 'beanstalk' in config:    
-            log.info("--> tornado initializing beanstalk")
-            import jobs
-            self.jobs = jobs.Jobs()  
+        # self.jobs = None    
+        # if 'beanstalk' in config:    
+        #     log.info("--> tornado initializing beanstalk")
+        #     import jobs
+        #     self.jobs = jobs.Jobs()  
             
-        # intialize oauth server
-        try:
-            self.oauth_server = oauth2.Server(signature_methods={'HMAC-SHA1': oauth2.SignatureMethod_HMAC_SHA1()})                                                    
-        except ImportError:
-            self.oauth_server = None
+        # # intialize oauth server
+        # try:
+        #     self.oauth_server = oauth2.Server(signature_methods={'HMAC-SHA1': oauth2.SignatureMethod_HMAC_SHA1()})                                                    
+        # except ImportError:
+        #     self.oauth_server = None
             
         Application.instance = self          
         
     def log_request(self, handler):
-        """Writes a completed HTTP request to the logs."""
-        if handler.get_status() < 400:
-            log_method = log.info
-        elif handler.get_status() < 500:
-            log_method = log.warning
-        else:
-            log_method = log.error
-        request_time = 1000.0 * handler.request.request_time()
-        if 'verbose' in config['tornado'] and config['tornado']['verbose']:            
-            log_method("%d (%s) %s %s %.2fms", handler.get_status(), handler.request.remote_ip, handler.request.method, handler.request.uri, request_time)
-    
+        return
+
         
 class render_jinja:
 
@@ -112,27 +130,27 @@ class Handler(tornado.web.RequestHandler):
         except:
             return None
     
-    @property
-    def db(self):
-        return self.application.db
+    # @property
+    # def db(self):
+    #     return self.application.db
 
-    @property
-    def redis(self):
-        return self.application.redis
+    # @property
+    # def redis(self):
+    #     return self.application.redis
 
-    @property
-    def cache(self):
-        return self.application.cache
+    # @property
+    # def cache(self):
+    #     return self.application.cache
         
-    @property
-    def jobs(self):
-        return self.application.jobs    
+    # @property
+    # def jobs(self):
+    #     return self.application.jobs    
         
-    @property
-    def oauth_server(self):    
-        return self.application.oauth_server                
+    # @property
+    # def oauth_server(self):    
+    #     return self.application.oauth_server                
                         
-    def render(self, template_name, template_values=None, **kwargs):      # using jinja2 templates instead of tornados to keep consistency
+    def render(self, template_name, template_values=None, **kwargs):
         if type(template_values) == dict:
             template_values.update(kwargs)
         else:
@@ -153,7 +171,7 @@ class Handler(tornado.web.RequestHandler):
             template_values['user'] = self.user
         template_dir = os.path.abspath(os.path.join(os.path.dirname(__main__.__file__), "templates"))
         renderer = render_jinja(template_dir)
-        renderer._lookup.filters.update(filters.filters)
+        renderer._lookup.filters.update(filters)
         output = (renderer[template_name](template_values)).encode('utf-8')
         suffix = strings.suffix('.', template_name)
         if suffix == "html":
@@ -252,21 +270,10 @@ def start(handlers):
         os.makedirs(static_dir)    
     tornado.options.logging = "none"
     ssl_options = None
-    if 'ssl_options' in config['tornado']:
-        ssl_options = {'certfile': config['tornado']['ssl_options']['certfile'], 'keyfile': config['tornado']['ssl_options']['keyfile']}
-    log.info("Starting tornado server on port %s" % config['tornado']['port'])
+    if 'ssl_options' in config['server']:
+        ssl_options = {'certfile': config['server']['ssl_options']['certfile'], 'keyfile': config['server']['ssl_options']['keyfile']}
+    log.info("Starting tornado server on port %s" % config['server']['port'])
     http_server = tornado.httpserver.HTTPServer(Application(handlers), ssl_options=ssl_options, xheaders=True)
-    http_server.listen(config['tornado']['port'])
+    http_server.listen(config['server']['port'])
     tornado.ioloop.IOLoop.instance().start()
-
-
-if __name__ == "__main__":
-
-    class Home(Handler):
-        def get(self):
-            return self.text("OK")
-    handlers = [
-        (r"/", Home),
-    ]    
-    start(handlers)
-
+    

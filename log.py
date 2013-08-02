@@ -9,7 +9,7 @@ try:
 except AttributeError:
     name = "python"
     
-log = logging.getLogger("braid_%s" % name)
+log = logging.getLogger(name)
 log.setLevel(logging.DEBUG)
 
 try:

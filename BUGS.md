@@ -1,0 +1,1 @@
+server outputs logs even when turned off
