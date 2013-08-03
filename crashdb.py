@@ -1,4 +1,4 @@
-import os, time, json
+import os, time, json, random
 try:
     from collections import OrderedDict
     Parent = OrderedDict
@@ -17,7 +17,7 @@ class CrashDB(Parent):
             if time.time() - start > 5.0:
                 raise Exception("Lock timeout")
         try:
-            open(self.lockfile, 'w').write("1")
+            open(self.lockfile, 'w').write("%s" % random.random())
             self.f = open(self.db_path, 'w+') if not os.path.exists(self.db_path) else open(self.db_path, 'r+')
             data = self.f.read()
             if not len(data.strip()):

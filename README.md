@@ -1,6 +1,7 @@
 housepy
 =======
 Personal utility library for Python 3
+(note: ported from more rambling 2.7 versions, remains incomplete)
 
 
 Usage
@@ -13,7 +14,6 @@ Place or symlink in your project directory.
 Installation
 ------------
 
-    brew install python3        # current: 3.3.2
     sudo pip-3.3 install -r requirements.txt
 
 #### pyglet
@@ -49,7 +49,7 @@ to check installed modules:
 
     pip-3.3 freeze
 
-
+    
 
 ### Copyright/License
 

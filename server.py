@@ -55,26 +55,6 @@ class Application(tornado.web.Application):
         tornado.web.Application.__init__(self, handlers, **settings)
         
         # # not ported or tested with Python 3
-        # if 'mysql' in config:
-        #     log.info("--> server initializing mysql")
-        #     import database
-        #     try:
-        #         self.db = database.Connection()
-        #     except Exception as e:
-        #         log.error("Could not connect to MySQL: %s" % log.exc(e))   
-        # elif 'mongo' in config:    
-        #     log.info("--> server initializing mongo")
-        #     try:
-        #         mongo = config['mongo']
-        #         import pymongo                
-        #         connection = pymongo.Connection(mongo['host'])
-        #         self.db = connection[mongo['database']]
-        #     except Exception as e:
-        #         log.error("Could not connect to mongo: %s" % log.exc(e))
-        # if 'redis' in config:
-        #     log.info("--> tornado initializing redis")
-        #     import redis
-        #     self.redis = redis.StrictRedis()
         # if 'memcache' in config:
         #     log.info("--> torando initializing memcache")
         #     import memcache
@@ -85,13 +65,7 @@ class Application(tornado.web.Application):
         #     log.info("--> tornado initializing beanstalk")
         #     import jobs
         #     self.jobs = jobs.Jobs()  
-            
-        # # intialize oauth server
-        # try:
-        #     self.oauth_server = oauth2.Server(signature_methods={'HMAC-SHA1': oauth2.SignatureMethod_HMAC_SHA1()})                                                    
-        # except ImportError:
-        #     self.oauth_server = None
-            
+                        
         Application.instance = self          
         
     def log_request(self, handler):
@@ -131,25 +105,13 @@ class Handler(tornado.web.RequestHandler):
             return None
     
     # @property
-    # def db(self):
-    #     return self.application.db
-
-    # @property
-    # def redis(self):
-    #     return self.application.redis
-
-    # @property
     # def cache(self):
     #     return self.application.cache
         
     # @property
     # def jobs(self):
     #     return self.application.jobs    
-        
-    # @property
-    # def oauth_server(self):    
-    #     return self.application.oauth_server                
-                        
+                                
     def render(self, template_name, template_values=None, **kwargs):
         if type(template_values) == dict:
             template_values.update(kwargs)

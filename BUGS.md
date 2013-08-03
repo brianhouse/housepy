@@ -1,1 +1,1 @@
-server outputs logs even when turned off
+server outputs logs even when turned off, wtf
