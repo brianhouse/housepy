@@ -1,5 +1,4 @@
 import re
-from .log import log
 
 def format_time(seconds):
     if type(seconds) != int:

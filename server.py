@@ -23,7 +23,7 @@ from jinja2 import Environment, FileSystemLoader
     handlers = [
         (r"/", Home),
     ]    
-    start(handlers)
+    server.start(handlers)
 
 """
 
