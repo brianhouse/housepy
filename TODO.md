@@ -5,7 +5,6 @@ s3 with botocore
 
 finish drawing
 finish animation
-finish net
 
 PIL replacement?
 

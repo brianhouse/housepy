@@ -1,8 +1,6 @@
 import urllib.request
 from . import log
 
-# TODO: multipart, urldecode
-
 def grab(source, destination, data=None, username=None, password=None, headers=None):
     read(source, data, username, password, headers, destination)
 
@@ -10,7 +8,7 @@ def read(source, data=None, multipart=False, timeout=30, username=None, password
     request = urllib.request.Request(source)
     if data is not None:
         if type(data) == dict:
-            data = urllib.urlencode(data)
+            data = urlencode(data).encode('utf-8')
         request.add_header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
     if username and password:
         import base64
@@ -29,15 +27,14 @@ def read(source, data=None, multipart=False, timeout=30, username=None, password
 def urlencode(data):
     return urllib.parse.urlencode(data)
 
-# def urldecode(query_string):
-#     import urlparse
-#     data = urlparse.parse_qs(query_string, keep_blank_values=True)
-#     for d in data:
-#         if len(data[d]) == 0:
-#             data[d] = ""
-#         elif len(data[d]) == 1:
-#             data[d] = data[d][0]
-#     return data
+def urldecode(query_string):
+    data = urllib.parse.parse_qs(query_string, keep_blank_values=True)
+    for d in data:
+        if len(data[d]) == 0:
+            data[d] = ""
+        elif len(data[d]) == 1:
+            data[d] = data[d][0]
+    return data
             
 def validate_url(url):
     import re

@@ -118,7 +118,7 @@ class Handler(tornado.web.RequestHandler):
         else:
             template_values = kwargs
         template_values['uri'] = self.request.uri
-        if 'log_templates' in config['tornado'] and config['tornado']['log_templates']:    
+        if 'log_templates' in config['server'] and config['server']['log_templates']:    
             log.info("TEMPLATE %s: %s" % (template_name, template_values))
         else:    
             log.info("TEMPLATE %s" % template_name)            
@@ -135,7 +135,7 @@ class Handler(tornado.web.RequestHandler):
         renderer = render_jinja(template_dir)
         renderer._lookup.filters.update(filters)
         output = (renderer[template_name](template_values)).encode('utf-8')
-        suffix = strings.suffix('.', template_name)
+        suffix = template_name.split('.')[-1]
         if suffix == "html":
             self.html(output)
         else:

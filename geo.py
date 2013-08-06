@@ -36,7 +36,7 @@ def project(pt):
         com = eccent / 2
         con = ((1.0 - con) / (1.0 + con))**com
         ts = math.tan((math.pi / 2 - phi) / 2) / con
-        y = 0-r_major * math.log(ts)
+        y = (0 - r_major) * math.log(ts)
         return y 
     return merc_x(pt[0]), merc_y(pt[1])   
 
@@ -49,3 +49,17 @@ def geohash_decode(string):
     """Decode a geohash into a point (lon, lat)"""
     import geohash
     return geohash.decode(string)
+
+def heading(pt0, pt1):
+    """Returns the angle between two points, in degrees"""
+    degrees = math.degrees(math.atan2(float(pt1[0] - pt0[0]), float(pt1[1] - pt0[1])))
+    if degrees < 0:
+        degrees += 360
+    return degrees
+
+def angular_difference(deg0, deg1):
+    """Return the difference between two angles in positive degrees"""
+    result = abs(deg0 - deg1)
+    if result > 180:
+        result = abs(360 - result)
+    return result    
