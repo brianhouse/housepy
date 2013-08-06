@@ -1,7 +1,6 @@
 TODO
 ====
 
-emailer
 encryption
 
 s3 with botocore
