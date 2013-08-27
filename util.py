@@ -81,3 +81,14 @@ def parse_date(string):
     from dateutil import parser
     dt = parser.parse(string)
     return dt
+
+def timestamp(dt=None, tz='UTC'):
+    """Return a timestamp with the given timezone indicating the current time, or convert from a datetime"""
+    import time, datetime, pytz
+    tz = pytz.timezone(tz)
+    if dt is None:
+        dt = datetime.datetime.now(tz)
+    elif dt.tzinfo is not None:
+        dt = dt.astimezone(tz)
+    return int(time.mktime(dt.timetuple()))
+
