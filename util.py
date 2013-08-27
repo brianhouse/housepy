@@ -76,10 +76,14 @@ def lcmm(*args):
     """Return lcm of args."""   
     return reduce(lcm, args)
 
-def parse_date(string):
-    """Return a datetime with a best guess of the supplied string, using dateutil"""
+def parse_date(string, tz=None):
+    """Return a datetime with a best guess of the supplied string, using dateutil, and add tzinfo"""
+    import pytz
     from dateutil import parser
     dt = parser.parse(string)
+    if tz is not None:
+        tz = pytz.timezone(tz)
+        dt = dt.replace(tzinfo=tz)
     return dt
 
 def timestamp(dt=None, tz='UTC'):
