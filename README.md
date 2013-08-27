@@ -1,7 +1,7 @@
 housepy
 =======
 Personal utility library for Python 3  
-(note: other projects may use older housepy for 2.7, deprecated)
+(note: other projects may use older housepy for 2.7, deprecated, may or may not be equiv)
 
 
 Usage

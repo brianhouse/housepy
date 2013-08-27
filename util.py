@@ -10,7 +10,7 @@ def soup(string, **kwargs):
     
 def chunk(l, size):    
     def ck(l, size):
-        for i in xrange(0, len(l), size):
+        for i in range(0, len(l), size):
             yield l[i:i + size] 
     return list(ck(l, size))
 
@@ -30,7 +30,7 @@ def scale(value, in_min, in_max, out_min=0.0, out_max=1.0, limit=False):
 def distance(a, b):
     """Euclidean distance between two sequences"""
     assert len(a) == len(b)    
-    t = sum((a[i] - b[i])**2 for i in xrange(len(a)))
+    t = sum((a[i] - b[i])**2 for i in range(len(a)))
     return math.sqrt(t)
 
 def hamming_distance(a, b):
@@ -47,7 +47,7 @@ def lev_distance(a, b):
     """Levenshtein distance between two sequences (edit distance that allows substitutions, adds, and deletions)"""    
     if len(a) < len(b):
         return levenshtein(b, a)
-    previous_row = xrange(len(b) + 1)
+    previous_row = range(len(b) + 1)
     for i, ch_a in enumerate(a):
         current_row = [i + 1]
         for j, ch_b in enumerate(b):
@@ -64,17 +64,9 @@ def gcd(a, b):
         a, b = b, a % b
     return a
 
-def gcdm(*args):
-    """Return gcm of args."""   
-    return reduce(gcd, args)
-
 def lcm(a, b):
     """Return lowest common multiple."""
     return a * b / gcd(a, b)
-
-def lcmm(*args):
-    """Return lcm of args."""   
-    return reduce(lcm, args)
 
 def parse_date(string, tz=None):
     """Return a datetime with a best guess of the supplied string, using dateutil, and add tzinfo"""
