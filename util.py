@@ -76,4 +76,8 @@ def lcmm(*args):
     """Return lcm of args."""   
     return reduce(lcm, args)
 
-    
+def parse_date(string):
+    """Return a datetime with a best guess of the supplied string, using dateutil"""
+    from dateutil import parser
+    dt = parser.parse(string)
+    return dt

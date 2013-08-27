@@ -6,3 +6,4 @@ Geohash>=1.0rc1
 tornado>=3.1
 Jinja2>=2.7
 pycrypto>=2.6
+python-dateutil>=2.1
