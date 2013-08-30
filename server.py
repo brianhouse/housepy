@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from . import config, log, strings
-import os, re, datetime, hashlib, __main__
+import os, re, datetime, hashlib, __main__, base64, uuid
 import tornado.auth
 import tornado.httpserver
 import tornado.ioloop
@@ -43,7 +43,7 @@ class Application(tornado.web.Application):
         settings = {
             'template_path': os.path.abspath(os.path.join(os.path.dirname(__main__.__file__), "templates")),
             'static_path': os.path.abspath(os.path.join(os.path.dirname(__main__.__file__), "static")),
-            'cookie_secret': strings.random_string(32), # is this going to break things? in theory, it just means users get de-authenticated if the server restarts.
+            'cookie_secret': base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),
             'xsrf_cookies': True
         }
         
@@ -60,11 +60,11 @@ class Application(tornado.web.Application):
         #     import memcache
         #     self.cache = memcache.Client([config['memcache']['address'] + ":" + str(config['memcache']['port'])])
             
-        # self.jobs = None    
-        # if 'beanstalk' in config:    
-        #     log.info("--> tornado initializing beanstalk")
-        #     import jobs
-        #     self.jobs = jobs.Jobs()  
+        self.jobs = None    
+        if 'beanstalk' in config:    
+            log.info("--> tornado initializing beanstalk")
+            import jobs
+            self.jobs = jobs.Jobs()  
                         
         Application.instance = self          
         
@@ -108,9 +108,9 @@ class Handler(tornado.web.RequestHandler):
     # def cache(self):
     #     return self.application.cache
         
-    # @property
-    # def jobs(self):
-    #     return self.application.jobs    
+    @property
+    def jobs(self):
+        return self.application.jobs    
                                 
     def render(self, template_name, template_values=None, **kwargs):
         if type(template_values) == dict:

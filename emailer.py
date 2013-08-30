@@ -8,13 +8,29 @@ from . import config, log, strings
 """
 email:
     imap:
-        host: mail.messagingengine.com
+        server: mail.messagingengine.com
+        username: un
+        password: pp
+    smtp:
+        name: Dr. H
+        address: account@email.com
+        server: smtp.gmail.com
+        port: 587
         username: un
         password: pp
 
 //
 
+messages = emailer.fetch()
 for message in messages:
+    print(message['from'])
+    print(message['to'])
+    print(message['date'])
+    print(message['subject'])
+    if 'body' in message:
+        print(message['body'])
+    if 'html' in message:
+        print(message['html'])
     for attachment in message['attachments']:
         with open(attachment['filename'], 'wb') as f:
             f.write(attachment['data'])
@@ -48,7 +64,7 @@ def send(addresses, subject, text, html=None, attachment=None):
     log.info("emailer.send [%s] [%s]" % (addresses, subject))   
     if isinstance(addresses, str):
         addresses = [r.strip() for r in addresses.split(',')]
-    account = config['email']
+    account = config['email']['smtp']
     if html:
         msg = MIMEMultipart('alternative')
         msg.attach(MIMEText(text, 'plain'))  
@@ -71,7 +87,7 @@ def send(addresses, subject, text, html=None, attachment=None):
     msg['To'] = ','.join(addresses)
     msg['Subject'] = subject
     try:
-        server = smtplib.SMTP(account['host'], account['port'])
+        server = smtplib.SMTP(account['server'], account['port'])
         server.ehlo()
         server.starttls()
         server.ehlo()
@@ -129,8 +145,7 @@ def validate_address(emailaddress):
         return False # Email address has funny characters.        
         
 def fetch(delete=False):
-    ## should just search for unread
-    server = imaplib.IMAP4_SSL(config['email']['imap']['host'])
+    server = imaplib.IMAP4_SSL(config['email']['imap']['server'])
     server.login(config['email']['imap']['username'], config['email']['imap']['password'])
     server.select('INBOX')
     response, items = server.search(None, "(UNSEEN)")

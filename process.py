@@ -37,7 +37,7 @@ def kill_process(pid):
         return True            
 
 def secure_pid(run_folder):
-    name = strings.prefix('.', os.path.basename(__main__.__file__))
+    name = os.path.basename(__main__.__file__).split('.')[0]
     if name == "__main__":
         name = strings.suffix('/', os.path.dirname(__main__.__file__))
     log.info("Attempting to launch daemon %s..." % name)
