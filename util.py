@@ -68,14 +68,14 @@ def lcm(a, b):
     """Return lowest common multiple."""
     return a * b / gcd(a, b)
 
-def parse_date(string, tz=None):
+def parse_date(string, tz=None, dayfirst=False):
     """Return a datetime with a best guess of the supplied string, using dateutil, and add tzinfo"""
     import pytz
     from dateutil import parser
-    dt = parser.parse(string)
+    dt = parser.parse(string, dayfirst=dayfirst)
     if tz is not None:
         tz = pytz.timezone(tz)
-        dt = dt.replace(tzinfo=tz)
+        dt = tz.localize(dt)
     return dt
 
 def timestamp(dt=None, tz='UTC'):

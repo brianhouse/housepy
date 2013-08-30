@@ -99,3 +99,14 @@ def linkify(text, extra_params=""):
 def remove_non_ascii(s):        
     return "".join(i for i in s if ord(i) < 128)    
     
+def as_numeric(s):
+    try:
+        s = int(s)
+    except ValueError:
+        try:
+            s = float(s)
+        except ValueError:
+            pass
+    return s
+
+    
