@@ -8,3 +8,4 @@ Jinja2>=2.7
 pycrypto>=2.6
 python-dateutil>=2.1
 pytz>=2013b
+tinys3>=0.1.8
