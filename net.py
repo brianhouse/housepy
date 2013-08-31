@@ -21,7 +21,7 @@ def read(source, data=None, multipart=False, timeout=30, username=None, password
         f = urllib.request.urlopen(request, data, timeout=timeout) if data is not None else urllib.request.urlopen(request, timeout=timeout)
         response = f.read().decode('utf-8')
         return response
-    result = urllib.request.urlretrieve(request, filename, None, data) if data is not None else urllib.request.urlretrieve(request, filename)
+    result = urllib.request.urlretrieve(source, filename, None, data) if data is not None else urllib.request.urlretrieve(source, filename)
 
         
 def urlencode(data):
