@@ -18,10 +18,10 @@ from jinja2 import Environment, FileSystemLoader
     Usage:
 
     class Home(server.Handler):
-        def get(self):
+        def get(self, page=None):
             return self.text("OK")
     handlers = [
-        (r"/", Home),
+        (r"/?([^/]*)", Home),
     ]    
     server.start(handlers)
 
@@ -44,7 +44,7 @@ class Application(tornado.web.Application):
             'template_path': os.path.abspath(os.path.join(os.path.dirname(__main__.__file__), "templates")),
             'static_path': os.path.abspath(os.path.join(os.path.dirname(__main__.__file__), "static")),
             'cookie_secret': base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),
-            'xsrf_cookies': True
+            'xsrf_cookies': False
         }
         
         if 'server' in config:
