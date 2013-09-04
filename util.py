@@ -46,7 +46,7 @@ def weighted_hamming_distance(a, b):
 def lev_distance(a, b):
     """Levenshtein distance between two sequences (edit distance that allows substitutions, adds, and deletions)"""    
     if len(a) < len(b):
-        return levenshtein(b, a)
+        return lev_distance(b, a)
     previous_row = range(len(b) + 1)
     for i, ch_a in enumerate(a):
         current_row = [i + 1]

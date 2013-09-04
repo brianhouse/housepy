@@ -2,8 +2,8 @@ import smtplib, os, imaplib, email, mimetypes
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
-from email import encoders
-from . import config, log, strings
+from email import encoders, utils
+from . import config, log, strings, util
 
 """
 email:
@@ -152,27 +152,24 @@ def fetch(delete=False):
     messages = []
     for mail in items[0].split():
         try:
-            resp, data = server.fetch(mail, '(RFC822)')
-            s = data[0][1].decode('utf-8')
-            data = email.message_from_string(s)
-            message = { 'to': data['to'],
-                        'from': data['from'],
+            response, data = server.fetch(mail, '(RFC822)')            
+            data = email.message_from_bytes(data[0][1])
+            message = { 'to': utils.parseaddr(data['to'])[-1],
+                        'from': utils.parseaddr(data['from'])[-1],
                         'subject': data['subject'],
-                        'date': data['date'],
+                        'date': util.parse_date(data['date']),
                         'attachments': []
                         }
             for part in data.walk():
                 if part.get_content_maintype() == 'multipart':
                     continue
+                if part.get_content_type() == 'text/plain':
+                    message['body'] = part.get_payload(decode=True).strip().decode(part.get_content_charset())
+                if part.get_content_type() == 'text/html':
+                    message['html'] = part.get_payload(decode=True).strip().decode(part.get_content_charset())
                 filename = part.get_filename()
                 if filename:
                     message['attachments'].append({'filename': filename, 'data': part.get_payload(decode=True)})
-                else:
-                    ext = mimetypes.guess_extension(part.get_content_type())
-                    if ext == '.ksh':
-                        message['body'] = part.get_payload(decode=True).strip()
-                    if ext == '.html':
-                        message['html'] = part.get_payload(decode=True).strip()
             messages.append(message)
             if delete:
                 server.store(mail, '+FLAGS', '\\Deleted')
@@ -185,5 +182,5 @@ def fetch(delete=False):
     return messages        
 
 if __name__ == "__main__":
-    print((fetch()))
+    print(fetch())
         
