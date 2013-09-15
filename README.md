@@ -44,6 +44,15 @@ had to manually disable (temporarily rename) system python to get it to install 
     sudo mv /usr/bin/python_ /usr/bin/python
 
 
+#### PIL
+
+    hg clone https://github.com/smarnach/pil-py3k/
+    cd pil-py3k
+    python3 setup.py build_ext -i
+    python3 selftest.py
+    sudo python3 setup.py install
+
+
 #### other
 to check installed modules:
 
