@@ -9,9 +9,12 @@ import tornado.options
 import tornado.web
 import unicodedata
 import json as jsonlib
-import jinja2
-from jinja2 import Environment, FileSystemLoader
-
+try:
+    import jinja2
+    from jinja2 import Environment, FileSystemLoader
+except SyntaxError:
+    # jinja2 not supported in Python 3.2
+    pass
 
 """
     Tornado server!

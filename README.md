@@ -4,6 +4,11 @@ Personal utility library for Python 3
 (note: other projects may use older housepy for 2.7, deprecated, may or may not be equiv)
 
 
+Python 3.3
+----------
+Jinja2 requires >= 3.3; other dependencies should work in 3.2
+
+
 Usage
 -----
 Place or symlink in your project directory.
@@ -46,7 +51,12 @@ had to manually disable (temporarily rename) system python to get it to install 
 
 #### PIL
 
-    hg clone https://github.com/smarnach/pil-py3k/
+    sudo apt-get install libtiff4-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms1-dev libwebp-dev tcl8.5-dev tk8.5-dev
+    sudo ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
+    sudo ln -s /usr/lib/x86_64-linux-gnu/libfreetype.so /usr/lib
+    sudo ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
+
+    git clone https://github.com/smarnach/pil-py3k
     cd pil-py3k
     python3 setup.py build_ext -i
     python3 selftest.py
@@ -58,7 +68,19 @@ to check installed modules:
 
     pip-3.3 freeze
 
+
+#### Ubuntu notes
+
+To install pip for python3 on Ubuntu, install easy_install3 first:
     
+    sudo apt-get install easy_install3
+    sudo easy_install3 pip
+
+numpy and scipy must be installed through apt-get:
+
+    sudo apt-get install python3-numpy
+    sudo apt-get install python3-scipy
+
 
 ### Copyright/License
 
