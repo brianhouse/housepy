@@ -68,23 +68,42 @@ def lcm(a, b):
     """Return lowest common multiple."""
     return a * b / gcd(a, b)
 
-def parse_date(string, tz=None, dayfirst=False):
+
+""" The following functions work together to provide a means of converting from arbitrary date strings 
+    to UTC timestamps and back to uniformly formatted strings while handling time zones -- no naivete.
+    Note that this works only to 1sec resolution.
+    """
+
+def parse_date(string, tz='UTC', dayfirst=False):
     """Return a datetime with a best guess of the supplied string, using dateutil, and add tzinfo"""
     import pytz
     from dateutil import parser
     dt = parser.parse(string, dayfirst=dayfirst)
-    if tz is not None:
+    if dt.tzinfo is None:
         tz = pytz.timezone(tz)
         dt = tz.localize(dt)
+    else:
+        dt = dt.astimezone(tz)
     return dt
 
-def timestamp(dt=None, tz='UTC'):
-    """Return a timestamp with the given timezone indicating the current time, or convert from a datetime"""
-    import time, datetime, pytz
-    tz = pytz.timezone(tz)
+def timestamp(dt=None):
+    """Return a UTC timestamp indicating the current time, or convert from a datetime. If datetime is naive, it's assumed to be UTC"""
+    import time, datetime, pytz, calendar
+    tz = pytz.timezone('UTC')
     if dt is None:
         dt = datetime.datetime.now(tz)
     elif dt.tzinfo is not None:
         dt = dt.astimezone(tz)
-    return int(time.mktime(dt.timetuple()))
+    return int(calendar.timegm(dt.timetuple())) # assumes UTC
+
+def datestring(t=None, tz="America/New_York"):
+    """Return a string with the formatted date from a UTC timestamp, convert to given tz"""
+    import time, datetime, pytz
+    if t is None:
+        t = timestamp()
+    utc_z = pytz.timezone('UTC')
+    dt = utc_z.localize(datetime.datetime.utcfromtimestamp(t))
+    datestring = dt.astimezone(pytz.timezone(tz)).strftime("%Y-%m-%dT%H:%M:%S%z")
+    return datestring
+
 
