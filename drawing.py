@@ -79,8 +79,8 @@ class Context(object):
         self._ctx.set_source_rgba(*stroke)
         if radius_y is None:
             radius_y = radius_x
-        print(radius_x)
-        print(radius_y)
+        # print(radius_x)
+        # print(radius_y)
         # if fill:    
         #     fill = self._handle_color(fill)
         #     brush = aggdraw.Brush(fill[:3], fill[3]) 
@@ -130,6 +130,8 @@ class Context(object):
         if filename is None or '.' not in filename:
             if filename is None:
                 filename = '' 
+            elif filename[-1] != "/":
+                filename = "%s/" % filename
             filename = "%s%s.png" % (filename, int(time.time() * 1000))
         self._surface.write_to_png(filename) # write to file
         subprocess.call(["open", filename])
