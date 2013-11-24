@@ -96,14 +96,15 @@ def timestamp(dt=None, ms=False):
     t = calendar.timegm(dt.timetuple()) # assumes UTC
     return int(t) if not ms else float("%s.%s" % (t, dt.microsecond))
 
-def datestring(t=None, tz="America/New_York"):
+def datestring(t=None, tz="America/New_York", ms=False):
     """Return a string with the formatted date from a UTC timestamp, convert to given tz"""
     import time, datetime, pytz
     if t is None:
         t = timestamp()
     utc_z = pytz.timezone('UTC')
     dt = utc_z.localize(datetime.datetime.utcfromtimestamp(t))
-    datestring = dt.astimezone(pytz.timezone(tz)).strftime("%Y-%m-%dT%H:%M:%S%z")
+    format = "%Y-%m-%dT%H:%M:%S%z" if not ms else "%Y-%m-%dT%H:%M:%S.%f%z"
+    datestring = dt.astimezone(pytz.timezone(tz)).strftime(format)
     return datestring
 
 
