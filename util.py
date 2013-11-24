@@ -71,7 +71,6 @@ def lcm(a, b):
 
 """ The following functions work together to provide a means of converting from arbitrary date strings 
     to UTC timestamps and back to uniformly formatted strings while handling time zones -- no naivete.
-    Note that this works only to 1sec resolution.
     """
 
 def parse_date(string, tz='UTC', dayfirst=False):
@@ -86,7 +85,7 @@ def parse_date(string, tz='UTC', dayfirst=False):
         dt = dt.astimezone(tz)
     return dt
 
-def timestamp(dt=None):
+def timestamp(dt=None, ms=False):
     """Return a UTC timestamp indicating the current time, or convert from a datetime. If datetime is naive, it's assumed to be UTC"""
     import time, datetime, pytz, calendar
     tz = pytz.timezone('UTC')
@@ -94,7 +93,8 @@ def timestamp(dt=None):
         dt = datetime.datetime.now(tz)
     elif dt.tzinfo is not None:
         dt = dt.astimezone(tz)
-    return int(calendar.timegm(dt.timetuple())) # assumes UTC
+    t = calendar.timegm(dt.timetuple()) # assumes UTC
+    return int(t) if not ms else float("%s.%s" % (t, dt.microsecond))
 
 def datestring(t=None, tz="America/New_York"):
     """Return a string with the formatted date from a UTC timestamp, convert to given tz"""
