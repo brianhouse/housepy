@@ -151,11 +151,11 @@ class Handler(tornado.web.RequestHandler):
             output = jsonlib.dumps(data, indent=4, default=lambda obj: str(obj))               
         else:    
             output = jsonlib.dumps(data, indent=4, default=lambda obj: str(obj) if type(obj) != np.ndarray else list(obj))
-        self.set_header("Content-Type", "text/plain")
+        self.set_header("Content-Type", "application/json")
         if filename:
             self.set_header("Content-Disposition", "attachment; filename=%s" % filename)
         self.write(output)
-        log.info("200 text/plain (JSON)")
+        log.info("200 application/json")
 
     def xml(self, xml, filename=False):    
         self.set_header("Content-Type", "application/xml")
