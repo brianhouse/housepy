@@ -42,3 +42,12 @@ class ConfigError(Exception):
         
             
 config = Config()
+
+if '_remote' in config:
+    from . import net
+    url = config['_remote']
+    if url[:4] != "http":
+        url = "http://%s" % url
+    data = yaml.load(net.read(url))
+    for key in data:
+        config[key] = data[key]
