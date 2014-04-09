@@ -4,7 +4,7 @@ Personal utility library for Python 3
 (note: other projects may use older housepy for 2.7, deprecated, may or may not be equiv)
 
 
-Python 3.3
+Python 3.4
 ----------
 Jinja2 requires >= 3.3; other dependencies should work in 3.2
 
@@ -19,7 +19,17 @@ Place or symlink in your project directory.
 Installation
 ------------
 
-    sudo pip-3.3 install -r requirements.txt
+    sudo pip3.4 install -r requirements.txt
+
+#### numpy
+
+this has recently had trouble building with pip
+
+    git clone https://github.com/numpy/numpy.git
+    python3 setup.py build
+    python3 setup.py install    
+
+
 
 #### pyglet
 
@@ -66,7 +76,7 @@ had to manually disable (temporarily rename) system python to get it to install 
 #### other
 to check installed modules:
 
-    pip-3.3 freeze
+    pip3.4 freeze
 
 
 #### Ubuntu notes
@@ -84,6 +94,6 @@ numpy and scipy must be installed through apt-get:
 
 ### Copyright/License
 
-Copyright (c) 2013 Brian House
+Copyright (c) 2014 Brian House
 
 This code is released under the MIT License and is completely free to use for any purpose. See the LICENSE file for details.
