@@ -11,7 +11,7 @@ MAX_OBJECTS = 20
 
 class Context(object):
 
-    def __init__(self, width=800, height=600, background=(1.0, 1.0, 1.0, 1.0), fullscreen=False, title="animation", chrome=True, screen=0):
+    def __init__(self, width=800, height=600, background=(1.0, 1.0, 1.0, 1.0), fullscreen=False, title="animation", chrome=True, screen=0, smooth=True):
         self._width = width
         self._height = height
         self._fps = 60.0
@@ -22,6 +22,7 @@ class Context(object):
         self._chrome = chrome
         self.window = None        
         self.last_frame = 0
+        self.smooth = smooth
         self.objects = []
 
     @property
@@ -51,12 +52,13 @@ class Context(object):
             self.window.set_location(screen.x, screen.y)
         self.draw_func = draw_func
         pyglet.gl.glClearColor(*self._background)
-        pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)                             
-        pyglet.gl.glEnable(pyglet.gl.GL_BLEND)                                                            
-        pyglet.gl.glEnable(pyglet.gl.GL_LINE_SMOOTH)
-        pyglet.gl.glHint(pyglet.gl.GL_LINE_SMOOTH_HINT, pyglet.gl.GL_NICEST)    
-        self.window.on_draw = self.draw_loop                            ## should maybe use a decorator instead http://www.pyglet.org/doc/programming_guide/hello_world.html
-        pyglet.clock.schedule_interval(lambda x: x, 1.0 / self.fps)
+        if self.smooth:
+            pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)                             
+            pyglet.gl.glEnable(pyglet.gl.GL_BLEND)                                                            
+            pyglet.gl.glEnable(pyglet.gl.GL_LINE_SMOOTH)
+            pyglet.gl.glHint(pyglet.gl.GL_LINE_SMOOTH_HINT, pyglet.gl.GL_NICEST)    
+        self.window.on_draw = self.draw_loop
+        pyglet.clock.schedule_interval(lambda x: x, 1.0 / 120.0)
         pyglet.app.run()            
 
     def draw_loop(self):
