@@ -78,7 +78,7 @@ class Context(object):
         else:
             self._ctx.move_to(x1, y1)
             self._ctx.line_to(x2, y2)
-        self._ctx.scale(1.0 / self._width, 1.0 / self._height)
+        self._ctx.scale(1.0 / self.width, 1.0 / self.height)
         self._ctx.set_line_width(thickness)
         self._ctx.stroke()
         self._ctx.restore()                
@@ -91,7 +91,7 @@ class Context(object):
         self._ctx.set_line_cap(cairo.LINE_CAP_SQUARE)        
         self._ctx.move_to(x1, y1)
         self._ctx.curve_to(xc, yc, xc, yc, x2, y2)
-        self._ctx.scale(1.0 / self._width, 1.0 / self._height)
+        self._ctx.scale(1.0 / self.width, 1.0 / self.height)
         self._ctx.set_line_width(thickness)
         self._ctx.stroke()
         self._ctx.restore()                
@@ -108,31 +108,10 @@ class Context(object):
         fill = self._handle_color(fill)
         if radius_y is None:
             radius_y = radius_x
-        # print(radius_x)
-        # print(radius_y)
-        # if fill:    
-        #     fill = self._handle_color(fill)
-        #     brush = aggdraw.Brush(fill[:3], fill[3]) 
-        # coords = (self._horiz(center_x - radius_x), self._vert(center_y - radius_y), self._horiz(center_x + radius_x), self._vert(center_y + radius_y))                         
-        # if self._flip:
-        #     coords = coords[0], coords[3], coords[2], coords[1]
-        # else:                
-        #     tmp = 360 - start
-        #     start = 360 - end
-        #     end = tmp
 
+        self._ctx.arc(center_x, center_y, radius_x, start, math.radians(end))
 
-        # circle only
-        self._ctx.arc(center_x, center_y, radius_x, 0, 2*math.pi)
-
-        # if start == 0 and end == 360:
-        #     self._ctx.ellipse(coords, pen, brush)        
-        # elif fill:
-        #     self._ctx.pieslice(coords, start, end, pen, brush)
-        # else:    
-        #     self._ctx.arc(coords, start, end, pen)            
-
-        self._ctx.scale(1.0 / self._width, 1.0 / self._height)
+        self._ctx.scale(1.0 / self.width, 1.0 / self.height) # this is maybe doing nothing        
         self._ctx.set_line_width(thickness)
         if fill is not None:
             self._ctx.set_source_rgba(*fill)
@@ -141,22 +120,6 @@ class Context(object):
         self._ctx.stroke()            
         self._ctx.restore()                
         self._ctx.save()
-
-        # need fill
-
-        # 
-        # self._verify_context()
-        # stroke = self._handle_color(stroke)
-        # pen = aggdraw.Pen(stroke[:3], thickness, stroke[3])
-        # if type(x1) == tuple or type(x1) == list:
-        #     points = []
-        #     for point in x1:
-        #         points.extend((self._horiz(point[0]), self._vert(point[1])))
-        #     self._ctx.line(points, pen)
-        # else:            
-        #     self._ctx.line((self._horiz(x1), self._vert(y1), self._horiz(x2), self._vert(y2)), pen)
-        # self._valid = False
-
 
     def output(self, filename=None):
         self._ctx.stroke() # commit to surface

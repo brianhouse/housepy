@@ -18,7 +18,7 @@ Place or symlink in your project directory.
 
 Installation
 ------------
-
+    sudo apt-get install python3-dev
     sudo pip3.4 install -r requirements.txt
 
 #### numpy
