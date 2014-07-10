@@ -25,5 +25,5 @@ class Dispatcher(object):
                     callback(data)
                 else:
                     callback()
-            except Exception, e:
+            except Exception as e:
                 log.error(log.exc(e))
