@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """
-    requires AVBin: http://avbin.github.io/AVbin/Download.html
-    python3 video playback stalls for some reason
-    for best video, convert to JPEG, WAV and deinterlace
+    Requires AVBin: http://avbin.github.io/AVbin/Download.html
+    python 3.X video playback stalls for some reason, this will run in python 2.7
+    For best results, convert to JPEG / WAV and deinterlace
 
 """
 
@@ -66,6 +66,9 @@ class VideoPlayer(pyglet.window.Window, dispatcher.Dispatcher):
                 self.fire('key', (chr(symbol), self.player.time))
             except ValueError:
                 pass
+
+    def on_eos(self):
+        self.close()
 
     def on_close(self):
         self.player.pause()
