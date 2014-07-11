@@ -21,6 +21,7 @@ class Keys(threading.Thread, dispatcher.Dispatcher):
                 if len(c.strip()):
                     # log.debug("got %s %s" % (c, ord(c)))
                     self.fire(ord(c))              
+                    self.fire('key', c)
             time.sleep(0.01)
 
     def restore(self):
