@@ -1,4 +1,4 @@
-import traceback
+import inspect
 from . import log
 
 class Dispatcher(object):
@@ -20,10 +20,7 @@ class Dispatcher(object):
         if not name in self.events:
             return
         for callback in self.events[name]:
-            try:
-                if data:
-                    callback(data)
-                else:
-                    callback()
-            except Exception as e:
-                log.error(log.exc(e))
+            if len(inspect.getargspec(callback).args):
+                callback(data)
+            else:
+                callback()
