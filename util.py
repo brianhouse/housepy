@@ -1,3 +1,5 @@
+import math
+
 def num_args(f):
     """Returns the number of arguments received by the given function"""
     import inspect
@@ -78,8 +80,8 @@ def parse_date(string, tz='UTC', dayfirst=False):
     import pytz
     from dateutil import parser
     dt = parser.parse(string, dayfirst=dayfirst)
+    tz = pytz.timezone(tz)
     if dt.tzinfo is None:
-        tz = pytz.timezone(tz)
         dt = tz.localize(dt)
     else:
         dt = dt.astimezone(tz)
