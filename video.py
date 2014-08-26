@@ -11,13 +11,16 @@ from pyglet.window import key
 from pyglet.gl import *
 from . import dispatcher, log
 
-def draw_rect(x, y, width, height):
+
+def draw_rect(x, y, width, height, color=(1., 1., 1., 1.)):
+    glColor4f(*color)        
     glBegin(GL_LINE_LOOP)
     glVertex2f(x, y)
     glVertex2f(x + width, y)
     glVertex2f(x + width, y + height)
     glVertex2f(x, y + height)
     glEnd()
+    glColor4f(1., 1., 1., 1.)
 
 
 class Control(pyglet.event.EventDispatcher):
@@ -48,9 +51,9 @@ class Button(Control):
 
     def draw(self):
         if self.charged:
-            glColor3f(1, 0, 0)
-        draw_rect(self.x, self.y, self.width, self.height)
-        glColor3f(1, 1, 1)
+            draw_rect(self.x, self.y, self.width, self.height, (1., 0., 0., 1.))
+        else:
+            draw_rect(self.x, self.y, self.width, self.height)
         self.draw_label()
 
     def on_mouse_press(self, x, y, button, modifiers):
@@ -124,7 +127,7 @@ class VideoPlayer(pyglet.window.Window, dispatcher.Dispatcher):
         self.slider.x = self.GUI_PADDING
         self.slider.y = self.GUI_PADDING * 2 + self.GUI_BUTTON_HEIGHT
         self.slider.on_begin_scroll = lambda: self.player.pause()
-        self.slider.on_end_scroll = lambda: self.player.play()
+        # self.slider.on_end_scroll = lambda: self.player.play()
         self.slider.on_change = lambda value: self.player.seek(value)    
         self.gui_update_source()                
         self.controls = []
@@ -176,6 +179,8 @@ class VideoPlayer(pyglet.window.Window, dispatcher.Dispatcher):
         for control in self.controls:
             if control.hit_test(x, y):
                 control.on_mouse_press(x, y, button, modifiers)
+            else:
+                self.fire('click', (self.player.time, x, y, modifiers))
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.SPACE:
@@ -184,10 +189,17 @@ class VideoPlayer(pyglet.window.Window, dispatcher.Dispatcher):
             self.dispatch_event('on_close')
         else:
             try:
-                self.fire(chr(symbol), self.player.time)
-                self.fire('key', (chr(symbol), self.player.time))
+                self.fire("%s_release" % chr(symbol), self.player.time)
+                self.fire('key', (self.player.time, chr(symbol)))
             except ValueError:
                 pass
+
+    def on_key_release(self, symbol, modifiers):
+        try:
+            self.fire(chr(symbol), self.player.time)
+            self.fire('key_release', (self.player.time, chr(symbol)))
+        except ValueError:
+            pass
 
     def on_play_pause(self):
         if self.player.playing:
@@ -209,13 +221,18 @@ class VideoPlayer(pyglet.window.Window, dispatcher.Dispatcher):
 
     def on_draw(self):
         self.clear()
-        if self.player.source.duration - self.player.time < 0.5:    # problem with hanging videos
+        if self.player.source.duration - self.player.time < 0.5:    # problem with hanging videos, so cutting half a second...
             self.on_eos()
         if self.player.source and self.player.source.video_format:
             self.player.get_texture().blit(self.video_x, self.video_y, width=self.video_width, height=self.video_height)
         self.slider.value = self.player.time
         for control in self.controls:
             control.draw()
+        self.fire('draw', self.player.time)
+
+    def draw_rect(self, x, y, width, height, color=None):
+        draw_rect(x, y, width, height, color)
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
