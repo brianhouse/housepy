@@ -13,8 +13,8 @@ from . import dispatcher, log
 
 
 def draw_rect(x, y, width, height, color=(1., 1., 1., 1.)):
-    glColor4f(*color)        
-    glBegin(GL_LINE_LOOP)
+    glColor4f(*color)
+    glBegin(GL_POLYGON) # GL_LINE_LOOP
     glVertex2f(x, y)
     glVertex2f(x + width, y)
     glVertex2f(x + width, y + height)
@@ -123,6 +123,8 @@ class VideoPlayer(pyglet.window.Window, dispatcher.Dispatcher):
         self.player.set_handler("on_eos", self.on_eos)        
         self.set_default_video_size()
         self.set_visible(True)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)        
         self.slider = Slider(self)
         self.slider.x = self.GUI_PADDING
         self.slider.y = self.GUI_PADDING * 2 + self.GUI_BUTTON_HEIGHT
