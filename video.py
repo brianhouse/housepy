@@ -185,10 +185,15 @@ class VideoPlayer(pyglet.window.Window, dispatcher.Dispatcher):
                 self.fire('click', (self.player.time, x, y, modifiers))
 
     def on_key_press(self, symbol, modifiers):
-        if symbol == key.SPACE:
-            self.on_play_pause()        
-        elif symbol == key.ESCAPE:
+        if symbol == key.ESCAPE:
             self.dispatch_event('on_close')
+        elif symbol == key.SPACE:
+            self.on_play_pause()        
+        elif symbol == key.LEFT or symbol == key.RIGHT:
+            if self.player.playing:
+                self.player.pause()
+            v = 1. / 30. # it will just drop keypresses if v < fps
+            self.player.seek(self.player.time + (v if symbol == key.RIGHT else -1 * v))
         else:
             try:
                 self.fire("%s_release" % chr(symbol), self.player.time)
