@@ -38,7 +38,7 @@ class Context(object):
         return self._fps
 
     def start(self, draw_func):
-        config = pyglet.gl.Config(sample_buffers=1, samples=4, depth_size=16, double_buffer=True)
+        config = pyglet.gl.Config(sample_buffers=1, samples=4, depth_size=24, double_buffer=True)
         style = pyglet.window.Window.WINDOW_STYLE_DEFAULT if self._chrome else pyglet.window.Window.WINDOW_STYLE_BORDERLESS
         screens = pyglet.window.get_platform().get_default_display().get_screens()
         screen_index = min(self._screen, len(screens) - 1)

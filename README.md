@@ -21,21 +21,12 @@ Installation
     sudo apt-get install python3-dev
     sudo pip3.4 install -r requirements.txt
 
-#### numpy
-
-this has recently had trouble building with pip
-
-    git clone https://github.com/numpy/numpy.git
-    python3 setup.py build
-    python3 setup.py install    
-
-
 
 #### pyglet
 
 note on Pyglet install: alpha download from the site didnt work. repository download didnt do 2to3 automatically.
 
-    hg clone https://pyglet.googlecode.com/hg/ pyglet
+    hg clone https://pyglet.googlecode.com/hg/pyglet
     cd pyglet
     2to3 -wn pyglet
     sudo python3 setup.py install
