@@ -50,6 +50,16 @@ class Application(tornado.web.Application):
             'xsrf_cookies': False
         }
         
+        if 'mongo' in config:    
+            log.info("Initializing mongo")
+            try:
+                mongo = config['mongo']
+                from pymongo import MongoClient
+                client = MongoClient(mongo['host'], mongo['port'])
+                self.db = client[mongo['database']]
+                log.info("--> %s" % self.db)
+            except Exception as e:
+                log.error("Could not connect to mongo: %s" % log.exc(e))        
         if 'server' in config:
             tornado_settings = config['server']
             for key in list(tornado_settings.keys()):
@@ -106,6 +116,10 @@ class Handler(tornado.web.RequestHandler):
             return jsonlib.loads(self.get_secure_cookie('user'))
         except:
             return None
+
+    @property
+    def db(self):
+        return self.application.db
     
     # @property
     # def cache(self):
@@ -156,6 +170,7 @@ class Handler(tornado.web.RequestHandler):
             self.set_header("Content-Disposition", "attachment; filename=%s" % filename)
         self.write(output)
         log.info("200 application/json")
+        self.finish()        
 
     def xml(self, xml, filename=False):    
         self.set_header("Content-Type", "application/xml")
@@ -163,29 +178,34 @@ class Handler(tornado.web.RequestHandler):
             self.set_header("Content-Disposition", "attachment; filename=%s" % filename)
         self.write(xml)
         log.info("200 application/xml")                            
+        self.finish()
 
     def html(self, html):
         self.set_header("Content-Type", "text/html")
         self.write(html)    
         log.info("200 text/html")                
+        self.finish()
 
     def text(self, string):
         self.set_header("Content-Type", "text/plain")
         self.write(string)
-        log.info("200 text/plain")            
+        log.info("200 text/plain")     
+        self.finish()       
 
     def csv(self, string, filename):
         self.set_header("Content-Type", "text/csv")
         self.set_header("Content-Disposition", "attachment; filename=%s" % filename)
         self.write(string)
-        log.info("200 text/csv")    
+        log.info("200 text/csv") 
+        self.finish()   
 
     def file(self, filename):
         self.set_header("Content-Type", "application/octet-stream")
         self.set_header("Content-Disposition", "attachment; filename=%s" % filename.split('/')[-1])
         self.set_header("Content-Length", "%s" % os.path.getsize(filename))    
         self.write(open(filename, 'r').read())
-        log.info("200 application/octet-stream (%s)" % filename)        
+        log.info("200 application/octet-stream (%s)" % filename)   
+        self.finish()
 
     def image(self, image):
         import imaging
@@ -195,6 +215,7 @@ class Handler(tornado.web.RequestHandler):
             image = imaging.to_string(image)            
         self.write(image)
         log.info("200 image/png")            
+        self.finish()        
 
     def temp_image(self, image):
         import imaging
@@ -203,11 +224,11 @@ class Handler(tornado.web.RequestHandler):
         if type(image) != str:
             image = imaging.to_string(image)                    
         self.write(image)
-        log.info("200 image/png (temporary)")            
+        log.info("200 image/png (temporary)")     
+        self.finish()
 
     def error(self, message="Error"):
         self.set_header("Status", "400 Bad Request")
-        self.write("400: %s" % message)
         log.error("400: %s" % message)
         self.send_error(400, message=message)
 
@@ -222,7 +243,22 @@ class Handler(tornado.web.RequestHandler):
         
     def redirect(self, url):
         log.info("--> redirecting to %s" % url)
-        tornado.web.RequestHandler.redirect(self, url)                   
+        tornado.web.RequestHandler.redirect(self, url)     
+
+    def write_error(self, status_code, **kwargs):
+        message = kwargs['message'] if 'message' in kwargs else self._reason
+        try:
+            template_dir = os.path.abspath(os.path.join(os.path.dirname(__main__.__file__), "templates"))
+            renderer = render_jinja(template_dir)
+            renderer._lookup.filters.update(filters)
+            output = (renderer["404.html"]({'status_code': status_code, 'message': message})).encode('utf-8')
+            self.finish(output)
+        except:            
+            self.finish("<html><title>%(code)d: %(message)s</title>"
+                        "<body>%(code)d: %(message)s</body></html>" % {
+                            "code": status_code,
+                            "message": message,
+                        })        
 
 authenticated = tornado.web.authenticated
 
