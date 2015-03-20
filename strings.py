@@ -102,10 +102,10 @@ def remove_non_ascii(s):
 def as_numeric(s):
     try:
         s = int(s)
-    except ValueError:
+    except (ValueError, TypeError):
         try:
             s = float(s)
-        except ValueError:
+        except (ValueError, TypeError):
             pass
     return s
 
