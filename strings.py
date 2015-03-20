@@ -91,6 +91,11 @@ def random_string(length=64):
     
 def titlecase(value):
     return re.sub("([a-z])'([A-Z])", lambda m: m.group(0).lower(), value.title())
+
+def camelcase(value):
+    value = value.replace('_', ' ')
+    tokens = value.split()
+    return ''.join([token[0].upper() + token[1:] for token in tokens])
     
 def linkify(text, extra_params=""):
     from tornado.escape import linkify
