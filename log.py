@@ -11,6 +11,7 @@ except AttributeError:
     
 log = logging.getLogger(name)
 log.setLevel(logging.DEBUG)
+log.propagate = False
 
 try:
     log_to_file = config['log']
