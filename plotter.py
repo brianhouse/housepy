@@ -13,10 +13,13 @@ class Plotter():
         self.w.create_rectangle(self.margin - 1, self.margin - 1, self.width + self.margin + 1, self.height + self.margin + 1)
 
     @classmethod
-    def plot(cls, bp_f, color="red"):
+    def plot(cls, bp_f, color="red"):                
         if cls.instance is None:
             cls.instance = Plotter()
-        points = [(i + cls.instance.margin, ((1.0 - bp_f(float(i) / cls.instance.width)) * cls.instance.height) + cls.instance.margin) for i in range(int(cls.instance.width))]
+        if callable(bp_f):
+            points = [(i + cls.instance.margin, ((1.0 - bp_f(float(i) / cls.instance.width)) * cls.instance.height) + cls.instance.margin) for i in range(int(cls.instance.width))]
+        else:
+            points = [((i / len(bp_f)) * cls.instance.width + cls.instance.margin, ((1.0 - bp_f[i]) * cls.instance.height) + cls.instance.margin) for i in range(len(bp_f))]            
         cls.instance.w.create_line(points, fill=color, width=2.0)
 
     @classmethod
