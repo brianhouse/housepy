@@ -2,9 +2,10 @@ import urllib.request
 from . import log
 
 def grab(source, destination, data=None, username=None, password=None, headers=None):
-    read(source, data, username, password, headers, destination)
+    read(source, data, username=username, password=password, headers=headers, filename=destination)
 
-def read(source, data=None, multipart=False, timeout=30, username=None, password=None, headers=None, filename=None):
+def read(source, data=None, timeout=30, username=None, password=None, headers=None, filename=None):
+    """Filename is the name of the file to write"""
     request = urllib.request.Request(source)
     if data is not None:
         if type(data) == dict:
@@ -21,7 +22,8 @@ def read(source, data=None, multipart=False, timeout=30, username=None, password
         f = urllib.request.urlopen(request, data, timeout=timeout) if data is not None else urllib.request.urlopen(request, timeout=timeout)
         response = f.read().decode('utf-8')
         return response
-    result = urllib.request.urlretrieve(source, filename, None, data) if data is not None else urllib.request.urlretrieve(source, filename)
+    else:
+        result = urllib.request.urlretrieve(source, filename, None, data) if data is not None else urllib.request.urlretrieve(source, filename)
 
         
 def urlencode(data):
