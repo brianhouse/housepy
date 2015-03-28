@@ -18,7 +18,7 @@ def get_pid(bin):
         return int(processes[0])
 
 def kill_process(pid):
-    log.info("--> attempting to kill process %s" % pid)
+    log.info("Attempting to kill process %s..." % pid)
     try:
         pid = int(pid)
         os.kill(pid, signal.SIGKILL)
