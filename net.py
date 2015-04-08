@@ -5,7 +5,7 @@ def grab(source, destination, data=None, username=None, password=None, headers=N
     read(source, data, username=username, password=password, headers=headers, filename=destination)
 
 def read(source, data=None, timeout=30, username=None, password=None, headers=None, filename=None):
-    """Filename is the name of the file to write"""
+    """Filename is the name of the file to write with the response"""
     request = urllib.request.Request(source)
     if data is not None:
         if type(data) == dict:
@@ -25,6 +25,11 @@ def read(source, data=None, timeout=30, username=None, password=None, headers=No
     else:
         result = urllib.request.urlretrieve(source, filename, None, data) if data is not None else urllib.request.urlretrieve(source, filename)
 
+def upload(url, filename, data=None):
+    import requests
+    with open(filename, 'rb') as f:
+        response = requests.post(url, files={'file': f}, data=data)
+    return response
         
 def urlencode(data):
     return urllib.parse.urlencode(data)
