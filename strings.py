@@ -105,7 +105,7 @@ def remove_non_ascii(s):
     return "".join(i for i in s if ord(i) < 128)    
     
 def as_numeric(s):
-    if type(s) == int or type(s) == float:
+    if type(s) == int or type(s) == float or type(s) == bool:
         return s
     try:
         s = int(s)
