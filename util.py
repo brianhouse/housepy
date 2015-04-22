@@ -109,4 +109,9 @@ def datestring(t=None, tz="America/New_York", ms=False):
     datestring = dt.astimezone(pytz.timezone(tz)).strftime(format)
     return datestring
 
-
+def delocalize_timestamp(lt, tz="America/New_York"):
+    """Convert a local timestamp to UTC"""
+    import datetime, pytz
+    tz = pytz.timezone(tz)
+    dt = tz.localize(datetime.datetime.utcfromtimestamp(lt))
+    return timestamp(dt)
