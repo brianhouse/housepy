@@ -251,7 +251,7 @@ class Handler(tornado.web.RequestHandler):
             template_dir = os.path.abspath(os.path.join(os.path.dirname(__main__.__file__), "templates"))
             renderer = render_jinja(template_dir)
             renderer._lookup.filters.update(filters)
-            output = (renderer["404.html"]({'status_code': status_code, 'message': message})).encode('utf-8')
+            output = (renderer["%s.html" % status_code]({'status_code': status_code, 'message': message})).encode('utf-8')
             self.finish(output)
         except:            
             self.finish("<html><title>%(code)d: %(message)s</title>"
