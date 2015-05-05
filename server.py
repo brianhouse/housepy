@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from . import config, log, strings
-import os, re, datetime, hashlib, __main__, base64, uuid
+import os, re, datetime, hashlib, __main__, base64, uuid, sys
 import tornado.auth
 import tornado.httpserver
 import tornado.ioloop
@@ -273,6 +273,8 @@ def start(handlers):
     ssl_options = None
     if 'ssl_options' in config['server']:
         ssl_options = {'certfile': config['server']['ssl_options']['certfile'], 'keyfile': config['server']['ssl_options']['keyfile']}
+    if config['server']['port'] is None and len(sys.argv) > 1:
+        config['server']['port'] = sys.argv[1]
     log.info("Starting tornado server on port %s" % config['server']['port'])
     http_server = tornado.httpserver.HTTPServer(Application(handlers), ssl_options=ssl_options, xheaders=True)
     http_server.listen(config['server']['port'])

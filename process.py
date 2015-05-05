@@ -36,11 +36,12 @@ def kill_process(pid):
         log.info("--> killed process %s" % pid)
         return True            
 
-def secure_pid(run_folder):
+def secure_pid(run_folder, suffix=""):
     name = os.path.basename(__main__.__file__).split('.')[0]
     if name == "__main__":
         name = strings.suffix('/', os.path.dirname(__main__.__file__))
     log.info("Attempting to launch daemon %s..." % name)
+    name = "%s%s" % (name, suffix)
     pid = str(os.getpid())
     if not os.path.isdir(run_folder):
         os.makedirs(run_folder)
