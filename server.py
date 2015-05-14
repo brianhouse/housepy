@@ -235,12 +235,7 @@ class Handler(tornado.web.RequestHandler):
     def not_found(self):
         log.warning("404: Page not found")
         raise tornado.web.HTTPError(404)        
-        
-    def get_error_html(self, status_code, message="Error", **kwargs):
-        if status_code == 404:
-            message = "Not found"
-        return "%(code)d: %(message)s" % {"code": status_code, "message": message} 
-        
+                
     def redirect(self, url):
         log.info("--> redirecting to %s" % url)
         tornado.web.RequestHandler.redirect(self, url)     
@@ -254,8 +249,7 @@ class Handler(tornado.web.RequestHandler):
             output = (renderer["%s.html" % status_code]({'status_code': status_code, 'message': message})).encode('utf-8')
             self.finish(output)
         except:            
-            self.finish("<html><title>%(code)d: %(message)s</title>"
-                        "<body>%(code)d: %(message)s</body></html>" % {
+            self.finish("%(code)d: %(message)s" % {
                             "code": status_code,
                             "message": message,
                         })        
