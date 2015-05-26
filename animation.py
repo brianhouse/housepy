@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import pyglet, time
+from . import dispatcher
 
 """
 Check http://cwru-hackers.googlecode.com/svn-history/r233/splatterboard/trunk/draw.py
@@ -9,7 +10,7 @@ Check http://cwru-hackers.googlecode.com/svn-history/r233/splatterboard/trunk/dr
 
 MAX_OBJECTS = 20
 
-class Context(object):
+class Context(dispatcher.Dispatcher):
 
     def __init__(self, width=800, height=600, background=(1.0, 1.0, 1.0, 1.0), fullscreen=False, title="animation", chrome=True, screen=0, smooth=True):
         self._width = width
@@ -24,6 +25,7 @@ class Context(object):
         self.last_frame = 0
         self.smooth = smooth
         self.objects = []
+        dispatcher.Dispatcher.__init__(self)
 
     @property
     def width(self):
@@ -50,6 +52,8 @@ class Context(object):
             self._height = screen.height
             self.window = pyglet.window.Window(config=config, width=self.width, height=self.height, resizable=False, fullscreen=False, caption=self._title, style=style, screen=screen)
             self.window.set_location(screen.x, screen.y)
+        self.window.on_mouse_press = self.on_mouse_press
+        self.window.on_mouse_release = self.on_mouse_release
         self.draw_func = draw_func
         pyglet.gl.glClearColor(*self._background)
         if self.smooth:
@@ -106,6 +110,12 @@ class Context(object):
             l.anchor_x = 'center'
         self.objects.append(l)
         return l
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        self.fire('mouse_press', (x, y, button, modifiers))
+
+    def on_mouse_release(self, x, y, button, modifiers):
+        self.fire('mouse_release', (x, y, button, modifiers))
 
 
 def rgb_to_html(rgb_tuple):
