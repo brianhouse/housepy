@@ -112,10 +112,10 @@ class Context(dispatcher.Dispatcher):
         return l
 
     def on_mouse_press(self, x, y, button, modifiers):
-        self.fire('mouse_press', (x, y, button, modifiers))
+        self.fire('mouse_press', (x/self.width, y/self.width, button, modifiers))
 
     def on_mouse_release(self, x, y, button, modifiers):
-        self.fire('mouse_release', (x, y, button, modifiers))
+        self.fire('mouse_release', (x/self.width, y/self.width, button, modifiers))
 
 
 def rgb_to_html(rgb_tuple):
