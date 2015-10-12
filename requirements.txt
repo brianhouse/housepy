@@ -9,3 +9,4 @@ pytz>=2013b
 tinys3>=0.1.8
 numpy>=1.9.1
 Pillow>=2.7.0
+cairocffi>=0.6

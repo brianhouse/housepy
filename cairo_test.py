@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import math
-import cairo
+import cairocffi as cairo
 
 WIDTH, HEIGHT = 256, 256
 

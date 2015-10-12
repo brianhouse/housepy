@@ -13,7 +13,8 @@ http://www.tortall.net/mu/wiki/CairoTutorial
 
 """
 
-import cairo, colorsys, math, time, subprocess
+import colorsys, math, time, subprocess
+import cairocffi as cairo
 
 class Context(object):
     """The drawing context"""    
