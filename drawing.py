@@ -13,7 +13,7 @@ http://www.tortall.net/mu/wiki/CairoTutorial
 
 """
 
-import colorsys, math, time, subprocess
+import colorsys, math, time, subprocess, os
 import cairocffi as cairo
 
 class Context(object):
@@ -150,9 +150,10 @@ class Context(object):
         if filename is None or '.' not in filename:
             if filename is None:
                 filename = '' 
-            elif filename[-1] != "/":
-                filename = "%s/" % filename
-            filename = "%s%s.png" % (filename, int(time.time() * 1000))
+            else:
+                if not os.path.isdir(filename):
+                    os.makedirs(filename)
+            filename = os.path.abspath(os.path.join(filename, "%s.png" % (int(time.time() * 1000))))
         self._surface.write_to_png(filename) # write to file
         subprocess.call(["open", filename])
 
