@@ -31,6 +31,7 @@ note on Pyglet install: alpha download from the site didnt work. repository down
     2to3 -wn pyglet
     sudo python3 setup.py install
 
+    -- maybe this works correctly now from pip
 
 
 #### pycairo

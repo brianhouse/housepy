@@ -81,7 +81,13 @@ class Context(dispatcher.Dispatcher):
         pyglet.gl.glLineWidth(thickness) 
         pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
             ('v2f', (x1 * self.width, y1 * self.height, x2 * self.width, y2 * self.height))
-        )
+        )        
+
+    def lines(self, points, color=(0., 0., 0., 1.), thickness=1.0):
+        pyglet.gl.glColor4f(*color)    
+        pyglet.gl.glLineWidth(thickness) 
+        points = [(item * self.width) if (i % 2 == 0) else (item * self.height) for sublist in points for (i, item) in enumerate(sublist)] # flatten
+        pyglet.graphics.draw(len(points) // 2, pyglet.gl.GL_LINE_STRIP, ('v2f', points))        
 
     def rect(self, x, y, width, height, color=(0., 0., 0., 1.), thickness=1.0):
         pyglet.gl.glColor4f(*color)    
