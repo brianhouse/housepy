@@ -15,6 +15,7 @@ http://www.tortall.net/mu/wiki/CairoTutorial
 
 import colorsys, math, time, subprocess, os
 import cairocffi as cairo
+from . import util
 
 class Context(object):
     """The drawing context"""    
@@ -153,7 +154,7 @@ class Context(object):
             else:
                 if not os.path.isdir(filename):
                     os.makedirs(filename)
-            filename = os.path.abspath(os.path.join(filename, "%s.png" % (int(time.time() * 1000))))
+            filename = os.path.abspath(os.path.join(filename, "%s.png" % util.timestamp()))
         self._surface.write_to_png(filename) # write to file
         subprocess.call(["open", filename])
 
