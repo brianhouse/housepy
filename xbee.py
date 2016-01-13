@@ -9,6 +9,7 @@ class XBee(threading.Thread):
     def __init__(self, device_name=None, baud=9600, message_handler=None, blocking=False):
         threading.Thread.__init__(self)
         self.daemon = True
+        self.verbose = False
         self.message_handler = message_handler
         if device_name is None:
             for dn in os.listdir("/dev"):
@@ -39,7 +40,8 @@ class XBee(threading.Thread):
         while True:
             try:
                 data = self.xbee.wait_read_frame()
-                # log.debug(data)
+                if self.verbose:
+                    log.debug(data)
                 response = {}
                 if 'source_addr' in data:
                     response['sensor'] = int(data['source_addr'][1])
@@ -50,7 +52,9 @@ class XBee(threading.Thread):
                 if 'rssi' in data:
                     response['rssi'] = int.from_bytes(data['rssi'], 'little')
                 if 'samples' in data:
-                    response['samples'] = [data['samples'][0][key] for key in data['samples'][0]]
+                    samples = list(data['samples'][0].items())
+                    samples.sort(key=lambda item: item[0])
+                    response['samples'] = [s[1] for s in samples]
                 if self.message_handler is not None:
                     self.message_handler(response)
             except Exception as e:
