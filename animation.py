@@ -89,6 +89,10 @@ class Context(dispatcher.Dispatcher):
         points = [(item * self.width) if (i % 2 == 0) else (item * self.height) for sublist in points for (i, item) in enumerate(sublist)] # flatten
         pyglet.graphics.draw(len(points) // 2, pyglet.gl.GL_LINE_STRIP, ('v2f', points))        
 
+    def plot(self, signal, color=(0., 0., 0., 1.), thickness=1.0):
+        points = [(float(s) / self.width, sample) for (s, sample) in enumerate(signal)]
+        self.lines(points, color=color, thickness=thickness)    
+
     def rect(self, x, y, width, height, color=(0., 0., 0., 1.), thickness=1.0):
         pyglet.gl.glColor4f(*color)    
         pyglet.gl.glLineWidth(thickness) 
