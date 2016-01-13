@@ -96,7 +96,7 @@ def timestamp(dt=None, ms=False):
     elif dt.tzinfo is not None:
         dt = dt.astimezone(tz)
     t = calendar.timegm(dt.timetuple()) # assumes UTC
-    return int(t) if not ms else float("%s.%s" % (t, dt.microsecond))
+    return int(t) if not ms else t + (dt.microsecond / 1000000.0)
 
 def datestring(t=None, tz="America/New_York", ms=False):
     """Return a string with the formatted date from a UTC timestamp, convert to given tz"""

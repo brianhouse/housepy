@@ -111,7 +111,9 @@ class Context(dispatcher.Dispatcher):
     def curve():
         pass
 
-    def label(self, x, y, text="", font="Times New Roman", size=36, width=400, color=(0, 0, 0, 255), center=False):
+    def label(self, x, y, text="", font="Helvetica", size=36, width=400, color=(0., 0., 0., 1.), center=False):
+        # why is the antialiasing so awful
+        color = [int(c * 255) for c in color] # why?
         l = pyglet.text.HTMLLabel(text, x=x * self.width, y=y * self.height, width=width, multiline=True)
         l.font_name = font
         l.font_size = size
@@ -119,6 +121,7 @@ class Context(dispatcher.Dispatcher):
         if center:
             l.anchor_x = 'center'
         self.objects.append(l)
+        l.draw()
         return l
 
     def on_mouse_press(self, x, y, button, modifiers):
