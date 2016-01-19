@@ -12,16 +12,16 @@ MAX_OBJECTS = 20
 
 class Context(dispatcher.Dispatcher):
 
-    def __init__(self, width=800, height=600, background=(1.0, 1.0, 1.0, 1.0), fullscreen=False, title="animation", chrome=True, screen=0, smooth=True):
+    def __init__(self, width=800, height=600, background=(1.0, 1.0, 1.0, 1.0), fullscreen=False, title="animation", chrome=True, screen=0, smooth=True, _3d=False):
         self._width = width
         self._height = height
-        self._fps = 60.0
         self._background = background
         self._fullscreen = fullscreen
         self._title = title
         self._screen = screen
         self._chrome = chrome
-        self.window = None        
+        self.window = None   
+        self._3d = _3d     
         self.last_frame = 0
         self.smooth = smooth
         self.objects = []
@@ -37,9 +37,9 @@ class Context(dispatcher.Dispatcher):
 
     @property
     def fps(self):
-        return self._fps
+        return pyglet.clock.get_fps()
 
-    def start(self, draw_func):
+    def start(self, draw_func, update_func=None):
         config = pyglet.gl.Config(sample_buffers=1, samples=4, depth_size=24, double_buffer=True)
         style = pyglet.window.Window.WINDOW_STYLE_DEFAULT if self._chrome else pyglet.window.Window.WINDOW_STYLE_BORDERLESS
         screens = pyglet.window.get_platform().get_default_display().get_screens()
@@ -55,26 +55,45 @@ class Context(dispatcher.Dispatcher):
         self.window.on_mouse_press = self.on_mouse_press
         self.window.on_mouse_release = self.on_mouse_release
         self.draw_func = draw_func
-        pyglet.gl.glClearColor(*self._background)
+        self.update_func = update_func if update_func is not None else lambda x: x        
+        pyglet.gl.glClearColor(*self._background)        
+        if self._3d:
+            pyglet.gl.glColor3f(1, 0, 0)
+            pyglet.gl.glEnable(pyglet.gl.GL_DEPTH_TEST)
+            pyglet.gl.glEnable(pyglet.gl.GL_CULL_FACE)
+            # pyglet.gl.glPolygonMode(pyglet.gl.GL_FRONT_AND_BACK, pyglet.gl.GL_LINE) # Uncomment this line for a wireframe view    
+            pyglet.gl.glEnable(pyglet.gl.GL_LIGHTING)
+            pyglet.gl.glEnable(pyglet.gl.GL_LIGHT0)
+            pyglet.gl.glEnable(pyglet.gl.GL_LIGHT1)
         if self.smooth:
             pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)                             
             pyglet.gl.glEnable(pyglet.gl.GL_BLEND)                                                            
             pyglet.gl.glEnable(pyglet.gl.GL_LINE_SMOOTH)
             pyglet.gl.glHint(pyglet.gl.GL_LINE_SMOOTH_HINT, pyglet.gl.GL_NICEST)    
         self.window.on_draw = self.draw_loop
-        pyglet.clock.schedule_interval(lambda x: x, 1.0 / 120.0)
+        if self._3d:
+            self.window.on_resize = self.on_resize
+        pyglet.clock.schedule(self.update_func)
         pyglet.app.run()            
+
+    def on_resize(self, width, height):
+        if self._3d:
+            pyglet.gl.glViewport(0, 0, width, height)
+            pyglet.gl.glMatrixMode(pyglet.gl.GL_PROJECTION)
+            pyglet.gl.glLoadIdentity()
+            pyglet.gl.gluPerspective(60.0, width / height, 0.1, 1000.0)
+            pyglet.gl.glMatrixMode(pyglet.gl.GL_MODELVIEW)
+        return pyglet.event.EVENT_HANDLED
 
     def draw_loop(self):
         self.window.clear()
+        pyglet.gl.glLoadIdentity()        
         self.draw_func()
         for o in self.objects:
             o.draw()
-        t = time.time()
-        elapsed = t - self.last_frame
-        if 1.0 / elapsed < 30.0:
-            print(("%f fps" % (1.0 / elapsed)))
-        self.last_frame = t
+        fps = pyglet.clock.get_fps()
+        if fps < 30:
+            print("%f fps" % fps)
 
     def line(self, x1, y1, x2, y2, color=(0., 0., 0., 1.), thickness=1.0):
         pyglet.gl.glColor4f(*color)    
@@ -82,6 +101,14 @@ class Context(dispatcher.Dispatcher):
         pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
             ('v2f', (x1 * self.width, y1 * self.height, x2 * self.width, y2 * self.height))
         )        
+
+    def line3(self, x1, y1, z1, x2, y2, z2, color=(0., 0., 0., 1.), thickness=1.0):
+        self.depth = self.height
+        pyglet.gl.glColor4f(*color)    
+        pyglet.gl.glLineWidth(thickness) 
+        pyglet.graphics.draw(2, pyglet.gl.GL_LINES,
+            ('v3f', (x1 * self.width, y1 * self.height, z1 * self.depth, x2 * self.width, y2 * self.height, z2 * self.depth))
+        )  
 
     def lines(self, points, color=(0., 0., 0., 1.), thickness=1.0):
         pyglet.gl.glColor4f(*color)    
