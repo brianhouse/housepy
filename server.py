@@ -142,7 +142,7 @@ class Handler(tornado.web.RequestHandler):
         for key in config: 
             if type(config[key]) is dict:
                 for param in config[key]:
-                    template_values[key + "_" + param] = str(config[key][param])
+                    template_values["%s_%s" % (key, param)] = str(config[key][param])
             else:
                 template_values[key] = config[key]                       
         template_values['template_name'] = template_name                         
