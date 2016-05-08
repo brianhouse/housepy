@@ -27,6 +27,10 @@ Installation
     brew install fontconfig
     brew install cairo
 
+#### rtmidi
+
+    brew install rtmidi
+
 
 #### other
 to check installed modules:

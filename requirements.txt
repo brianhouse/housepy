@@ -17,6 +17,7 @@ pyparsing>=2.1.1
 pyserial>=3.0.1
 python-dateutil>=2.5.2
 python-geohash>=0.8.5
+python-rtmidi==0.5b1
 pytz>=2016.3
 PyYAML>=3.11
 requests>=2.9.1
