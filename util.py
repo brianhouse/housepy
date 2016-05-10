@@ -1,4 +1,4 @@
-import math
+import math, pickle
 
 def num_args(f):
     """Returns the number of arguments received by the given function"""
@@ -125,3 +125,11 @@ def delocalize_timestamp(lt, tz="America/New_York"):
     tz = pytz.timezone(tz)
     dt = tz.localize(datetime.datetime.utcfromtimestamp(lt))
     return timestamp(dt)
+
+def save(filename, data):
+    with open(filename, 'wb') as f:
+        pickle.dump(data, f)
+
+def load(filename):
+    with open(filename, 'rb') as f:
+        return pickle.load(f)

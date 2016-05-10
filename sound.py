@@ -5,7 +5,7 @@ from . import log, util
 
 CHUNK = 1024
 
-class SoundSignal(object):
+class Sound(object):
 
     def __init__(self):
         self.signal = None
@@ -16,14 +16,14 @@ class SoundSignal(object):
         self.wf = None
 
     def load(self, path):
-        log.info("SoundSignal.load")
+        log.info("Sound.load")
         log.info("--> loading from %s" % path)
         self.path = path
         self.wf = wave.open(self.path, 'rb')
         self.bits = self.wf.getsampwidth() * 8
         if self.bits != 16:
             raise NotImplementedError
-        self.signal = np.fromstring(self.wf.readframes(-1), 'Int16')
+        self.signal = np.fromstring(self.wf.readframes(-1), 'Int16') # signed 16-bit samples
         self.wf.rewind()
         self.rate = self.wf.getframerate()
         self.samples = len(self.signal)
@@ -130,5 +130,9 @@ class SoundSignal(object):
         # print()
         # print(ts)
 
+
+def write_audio(signal, filename, rate=44100):
+    from scipy.io import wavfile
+    wavfile.write(filename, 44100, signal)
 
 
