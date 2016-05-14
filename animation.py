@@ -2,6 +2,10 @@
 
 import pyglet, time
 from . import dispatcher
+try:
+    import numpy as np
+except ImportError:
+    pass
 
 """
 Check http://cwru-hackers.googlecode.com/svn-history/r233/splatterboard/trunk/draw.py
@@ -101,6 +105,13 @@ class Context(dispatcher.Dispatcher):
         fps = pyglet.clock.get_fps()
         if fps < 30:
             print("%f fps" % fps)
+
+    def pixels(self, pixels):        
+        """ This expects a 2D numpy array """
+        pixels = np.flipud(np.rot90(pixels))
+        w = pixels.shape[0]
+        h = pixels.shape[1]
+        pyglet.gl.glDrawPixels(w, h, pyglet.gl.GL_RGBA, pyglet.gl.GL_UNSIGNED_BYTE, pixels.transpose().tobytes())
 
     def line(self, x1, y1, x2, y2, color=(0., 0., 0., 1.), thickness=1.0):
         pyglet.gl.glColor4f(*color)    
