@@ -66,3 +66,46 @@ if __name__ == "__main__":
         log.info(response)
     xbee = XBee(config['device_name'], message_handler=message_handler, blocking=True)
 
+
+
+"""
+
+XBee Setup
+----------
+
+#### NOTE: THIS IS SERIES 1
+- install drivers (Mac OS X x64 2.2.18, for OS X 10.10.2): http://www.ftdichip.com/Drivers/VCP.htm  
+- use X-CTU (http://www.digi.com/support/productdetail?pid=3352&type=utilities + http://support.apple.com/kb/DL1572?viewlocale=en_US&locale=en_US) to update firmware  
+
+9600 baud, 8 bit, no parity, 1 stop bit, no flow control
+
+#### for coordinator
+MY: 1  
+CE: 1  
+AP: 2  
+
+#### for remote
+DL: FFFF    (broadcast)  
+MY: 2  
+AP: 2  
+D2: 2       (analog)  
+D1: 2  
+D0: 2  
+IT: 1       (samples)  
+IR: 8       (8ms)
+
+maximum sample rate is 1ms -- but what is max transmission rate?
+philosophically, I like to get gestures at 60hz, which is 16.67ms
+to signal process that, we'd need half the sample rate, 8ms
+
+
+
+use `ls /dev/tty.*` to find devices
+
+
+#### addresses
+- long address is the full 64-bit mac address printed on the back of the xbee, always starts with 0013A200 (for XBee brand)
+- short address is 16-bit and is set with ATMY (series 2 assigns it automatically)
+
+
+"""

@@ -133,6 +133,6 @@ class Sound(object):
 
 def write_audio(signal, filename, rate=44100):
     from scipy.io import wavfile
-    wavfile.write(filename, 44100, signal)
+    wavfile.write(filename, rate, signal)
 
 

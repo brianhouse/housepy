@@ -51,7 +51,7 @@ class Context(dispatcher.Dispatcher):
         screen = screens[screen_index]
         if not (self._fullscreen and screen_index !=0):
             self.window = pyglet.window.Window(config=config, width=self.width, height=self.height, resizable=False, fullscreen=self._fullscreen, caption=self._title, style=style, screen=screen)
-        else:   # hack because pyglet fullscreen doesnt work on secondary screen
+        else:   # hack because pyglet fullscreen doesnt work on secondary screen (bug)
             self._width = screen.width
             self._height = screen.height
             self.window = pyglet.window.Window(config=config, width=self.width, height=self.height, resizable=False, fullscreen=False, caption=self._title, style=style, screen=screen)
