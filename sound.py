@@ -1,4 +1,4 @@
-import pyaudio, wave
+import pyaudio, wave, os
 import numpy as np
 import matplotlib.pyplot as plt
 from . import log, util
@@ -37,7 +37,7 @@ class Sound(object):
     def reload(self):
         return self.load(self.path)
 
-    def record(self, duration, path=None, rate=11025):
+    def record(self, duration, path=None, rate=11025, keep_file=True):
         log.info("SoundSignal.record")
         if path is None:
             path = "%s.wav" % util.dt(util.timestamp(), tz="America/New_York").strftime("%y%m%d-%H%M%S")    # needs to be local timezone
@@ -67,6 +67,8 @@ class Sound(object):
         wf.close()
 
         self.load(path)
+        if not keep_file:   # this is kind of a hack. 
+            os.remove(path)
         return self
 
 

@@ -51,10 +51,14 @@ class XBee(threading.Thread):
                     response['parameter'] = int.from_bytes(data['parameter'], 'little')
                 if 'rssi' in data:
                     response['rssi'] = int.from_bytes(data['rssi'], 'little')
-                if 'samples' in data:
-                    samples = list(data['samples'][0].items())
-                    samples.sort(key=lambda item: item[0])
-                    response['samples'] = [s[1] for s in samples]
+                if 'samples' in data:              
+                    response['samples'] = []
+                    for each in data['samples']:
+                        samples = list(each.items())
+                        samples.sort(key=lambda item: item[0])
+                        response['samples'].append([s[1] for s in samples])
+                    if len(response['samples']) == 1:
+                        response['samples'] = response['samples'][0]
                 if self.message_handler is not None:
                     self.message_handler(response)
             except Exception as e:
@@ -78,6 +82,7 @@ XBee Setup
 - use X-CTU (http://www.digi.com/support/productdetail?pid=3352&type=utilities + http://support.apple.com/kb/DL1572?viewlocale=en_US&locale=en_US) to update firmware  
 
 9600 baud, 8 bit, no parity, 1 stop bit, no flow control
+(press the button when it asks!)
 
 #### for coordinator
 MY: 1  
@@ -91,13 +96,13 @@ AP: 2
 D2: 2       (analog)  
 D1: 2  
 D0: 2  
-IT: 1       (samples)  
-IR: 8       (8ms)
+IT: 1       (samples before transmission)  
+IR: 24       (sample rate, 36ms)
 
-maximum sample rate is 1ms -- but what is max transmission rate?
-philosophically, I like to get gestures at 60hz, which is 16.67ms
-to signal process that, we'd need half the sample rate, 8ms
-
+I like to get gestures at 60hz, which is 16.67ms
+to signal process that, we'd need half the sample rate, 8ms.
+but transmissions need to be staggered with multiple xbees. otherwise it floods.
+for 30fs, 36ms sampling is definitely enough.
 
 
 use `ls /dev/tty.*` to find devices
