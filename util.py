@@ -86,20 +86,22 @@ def load(filename):
 
 def parse_date(string, tz='UTC', dayfirst=False):
     """Return a datetime with a best guess of the supplied string, using dateutil, and add tzinfo"""
+    date = None
     try:
-        dt = parser.parse(string, dayfirst=dayfirst)
+        date = parser.parse(string, dayfirst=dayfirst)
     except ValueError as e:
         try:
-            return int(string) # is it a timestamp? If not, raise original error.
+            date = dt(int(string), tz=tz) # is it a timestamp? If not, raise original error.
         except ValueError:
             pass
-        raise e
+        if date is None:
+            raise e            
     tz = pytz.timezone(tz)
-    if dt.tzinfo is None:
-        dt = tz.localize(dt)
+    if date.tzinfo is None:
+        date = tz.localize(date)
     else:
-        dt = dt.astimezone(tz)
-    return dt
+        date = date.astimezone(tz)
+    return date
 
 def timestamp(dt=None, ms=False):
     """Return a UTC timestamp indicating the current time, or convert from a datetime. If datetime is naive, it's assumed to be UTC"""
