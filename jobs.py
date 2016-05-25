@@ -175,9 +175,7 @@ class Jobs(object): # having this in a class allows control over connection time
 
         
 def launch_beanstalkd():
-    
-    """Note that this keeps beanstalkd within this python process, so be careful if you have multiple daemons."""
-    
+        
     def write_pidfile(pid, pidfile):    
         f = open(pidfile, 'w')
         f.write(str(pid))

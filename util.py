@@ -1,4 +1,5 @@
-import math, pickle
+import math, pickle, time, datetime, pytz, calendar
+from dateutil import parser
 
 def num_args(f):
     """Returns the number of arguments received by the given function"""
@@ -70,6 +71,14 @@ def lcm(a, b):
     """Return lowest common multiple."""
     return a * b / gcd(a, b)
 
+def save(filename, data):
+    with open(filename, 'wb') as f:
+        pickle.dump(data, f)
+
+def load(filename):
+    with open(filename, 'rb') as f:
+        return pickle.load(f)
+        
 
 """ The following functions work together to provide a means of converting from arbitrary date strings 
     to UTC timestamps and back to uniformly formatted strings while handling time zones -- no naivete.
@@ -77,9 +86,14 @@ def lcm(a, b):
 
 def parse_date(string, tz='UTC', dayfirst=False):
     """Return a datetime with a best guess of the supplied string, using dateutil, and add tzinfo"""
-    import pytz
-    from dateutil import parser
-    dt = parser.parse(string, dayfirst=dayfirst)
+    try:
+        dt = parser.parse(string, dayfirst=dayfirst)
+    except ValueError as e:
+        try:
+            return int(string) # is it a timestamp? If not, raise original error.
+        except ValueError:
+            pass
+        raise e
     tz = pytz.timezone(tz)
     if dt.tzinfo is None:
         dt = tz.localize(dt)
@@ -89,7 +103,6 @@ def parse_date(string, tz='UTC', dayfirst=False):
 
 def timestamp(dt=None, ms=False):
     """Return a UTC timestamp indicating the current time, or convert from a datetime. If datetime is naive, it's assumed to be UTC"""
-    import time, datetime, pytz, calendar
     tz = pytz.timezone('UTC')
     if dt is None:
         dt = datetime.datetime.now(tz)
@@ -98,9 +111,8 @@ def timestamp(dt=None, ms=False):
     t = calendar.timegm(dt.timetuple()) # assumes UTC
     return int(t) if not ms else t + (dt.microsecond / 1000000.0)
 
-def datestring(t=None, tz="America/New_York", ms=False):
+def datestring(t=None, tz='America/New_York', ms=False):
     """Return a string with the formatted date from a UTC timestamp, convert to given tz"""
-    import time, datetime, pytz
     if t is None:
         t = timestamp()
     utc_z = pytz.timezone('UTC')
@@ -109,9 +121,8 @@ def datestring(t=None, tz="America/New_York", ms=False):
     datestring = dt.astimezone(pytz.timezone(tz)).strftime(format)
     return datestring
 
-def dt(t=None, tz="UTC"):
+def dt(t=None, tz='UTC'):
     """Get a datetime with the given tz from a UTC timestamp"""
-    import time, datetime, pytz
     if t is None:
         t = timestamp()
     utc_z = pytz.timezone('UTC')
@@ -119,17 +130,9 @@ def dt(t=None, tz="UTC"):
     dt = dt.astimezone(pytz.timezone(tz))
     return dt
 
-def delocalize_timestamp(lt, tz="America/New_York"):
+def delocalize_timestamp(lt, tz='America/New_York'):
     """Convert a local timestamp to UTC"""
-    import datetime, pytz
     tz = pytz.timezone(tz)
     dt = tz.localize(datetime.datetime.utcfromtimestamp(lt))
     return timestamp(dt)
 
-def save(filename, data):
-    with open(filename, 'wb') as f:
-        pickle.dump(data, f)
-
-def load(filename):
-    with open(filename, 'rb') as f:
-        return pickle.load(f)
