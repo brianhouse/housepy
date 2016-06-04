@@ -104,6 +104,8 @@ to signal process that, we'd need half the sample rate, 8ms.
 but transmissions need to be staggered with multiple xbees. otherwise it floods.
 for 30fs, 36ms sampling is definitely enough.
 
+two sensors at 36ms is fine. but three at 36 overloads. so it's like 15ms per sensor. that's not so good.
+
 
 use `ls /dev/tty.*` to find devices
 

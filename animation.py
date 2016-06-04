@@ -29,6 +29,7 @@ class Context(dispatcher.Dispatcher):
         self.last_frame = 0
         self.smooth = smooth
         self.objects = []
+        self.textures = []
         dispatcher.Dispatcher.__init__(self)
 
     @property
@@ -59,6 +60,8 @@ class Context(dispatcher.Dispatcher):
         self.window.on_mouse_press = self.on_mouse_press
         self.window.on_mouse_release = self.on_mouse_release
         self.window.on_mouse_drag = self.on_mouse_drag
+        self.window.on_key_press = self.on_key_press
+        self.window.on_key_release = self.on_key_release
         self.draw_func = draw_func
         self.update_func = update_func if update_func is not None else lambda x: x        
         pyglet.gl.glClearColor(*self._background)        
@@ -98,7 +101,11 @@ class Context(dispatcher.Dispatcher):
 
     def draw_loop(self):
         self.window.clear()        
-        pyglet.gl.glLoadIdentity()        
+        pyglet.gl.glLoadIdentity()  
+        pyglet.gl.glColor4f(1., 1., 1., 1.)      
+        pyglet.gl.glTexParameteri(pyglet.gl.GL_TEXTURE_2D, pyglet.gl.GL_TEXTURE_MAG_FILTER, pyglet.gl.GL_NEAREST)                                                                                                                                       
+        for t in self.textures:
+            t.blit(0, 0) # draw            
         self.draw_func()
         for o in self.objects:
             o.draw()
@@ -184,6 +191,13 @@ class Context(dispatcher.Dispatcher):
         l.draw()
         return l
 
+    def load_image(self, filename, x, y, width, height):
+        image = pyglet.resource.image(filename)
+        texture = image.get_texture()
+        texture.width = width
+        texture.height = height
+        self.textures.append(texture)
+
     def on_mouse_press(self, x, y, button, modifiers):
         if not self._3d:
             x /= self.width
@@ -195,6 +209,12 @@ class Context(dispatcher.Dispatcher):
             x /= self.width
             y /= self.height
         self.fire('mouse_release', (x, y, button, modifiers))
+
+    def on_key_press(self, key, modifiers):
+        self.fire('key_press', (chr(key), modifiers))
+
+    def on_key_release(self, key, modifiers):
+        self.fire('key_release', (chr(key), modifiers))
 
     def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
         if not self._3d:
