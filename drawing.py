@@ -7,6 +7,7 @@ Simple drawing with cairo
 http://www.cairographics.org/samples/
 http://www.tortall.net/mu/wiki/CairoTutorial
 
+Flip does not work if relative=False
 
 """
 
@@ -30,7 +31,8 @@ class Context(object):
         self._ctx.set_source_rgba(*background)
         self._ctx.rectangle(0, 0, self._width, self._height)
         self._ctx.fill()
-        if relative:
+        self.relative = relative
+        if self.relative:
             self._ctx.scale(self._width, self._height)
         else:
             self._ctx.scale(1.0, 1.0)
@@ -78,7 +80,8 @@ class Context(object):
         else:
             self._ctx.move_to(self._mx(x1), self._my(y1))
             self._ctx.line_to(self._mx(x2), self._my(y2))
-        self._ctx.scale(1.0 / self.width, 1.0 / self.height)
+        if self.relative:
+            self._ctx.scale(1.0 / self.width, 1.0 / self.height)
         self._ctx.set_line_width(thickness)
         self._ctx.stroke()
         self._ctx.restore()                
@@ -91,7 +94,8 @@ class Context(object):
         self._ctx.set_source_rgba(*stroke)
         self._ctx.set_line_cap(cairo.LINE_CAP_SQUARE)        
         self._ctx.rectangle(self._mx(x), self._my(y), self._mx(x + width), self._my(y + height))
-        self._ctx.scale(1.0 / self.width, 1.0 / self.height)
+        if self.relative:
+            self._ctx.scale(1.0 / self.width, 1.0 / self.height)
         self._ctx.set_line_width(thickness)
         if fill is not None:
             self._ctx.set_source_rgba(*fill)
@@ -113,7 +117,8 @@ class Context(object):
         self._ctx.set_line_cap(cairo.LINE_CAP_SQUARE)        
         self._ctx.move_to(x1, y1)
         self._ctx.curve_to(xc, yc, xc, yc, x2, y2)
-        self._ctx.scale(1.0 / self.width, 1.0 / self.height)
+        if self.relative:
+            self._ctx.scale(1.0 / self.width, 1.0 / self.height)
         self._ctx.set_line_width(thickness)
         self._ctx.stroke()
         self._ctx.restore()                
@@ -149,13 +154,34 @@ class Context(object):
         self._ctx.restore()
         self._ctx.save()
 
-        self._ctx.scale(1.0 / self.width, 1.0 / self.height)
+        if self.relative:
+            self._ctx.scale(1.0 / self.width, 1.0 / self.height)
         self._ctx.set_line_width(thickness)
         if fill is not None:
             self._ctx.set_source_rgba(*fill)
             self._ctx.fill_preserve()
         self._ctx.set_source_rgba(*stroke)
         self._ctx.stroke()            
+        self._ctx.restore()                
+        self._ctx.save()
+
+    def label(self, x, y, text, stroke=(0., 0., 0., 1.), font="Monaco", size=12):
+        x = self._mx(x)
+        y = self._my(y)        
+        stroke = self._handle_color(stroke)
+        self._ctx.set_source_rgba(*stroke)
+        self._ctx.select_font_face(font, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        self._ctx.set_font_size(size)
+        if self.relative: 
+            self._ctx.scale(1.0 / self.width, 1.0 / self.height)    
+            x *= self.width
+            y *= self.height            
+        if self.flip:
+            self._ctx.scale(1, -1)
+            self._ctx.translate(0, -self.height)
+            y = self.height - y
+        self._ctx.move_to(x, y) 
+        self._ctx.show_text(text)   
         self._ctx.restore()                
         self._ctx.save()
 
