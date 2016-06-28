@@ -91,7 +91,7 @@ AP: 2
 
 #### for remote
 DL: FFFF    (broadcast)  
-MY: 2  
+MY: 2  -- or whatever number
 AP: 2  
 D2: 2       (analog)  
 D1: 2  
@@ -103,8 +103,14 @@ I like to get gestures at 60hz, which is 16.67ms
 to signal process that, we'd need half the sample rate, 8ms.
 but transmissions need to be staggered with multiple xbees. otherwise it floods.
 for 30fs, 36ms sampling is definitely enough.
+two sensors at 36ms is fine. but three at 36 overloads. xbee not so good for gestures :/
 
-two sensors at 36ms is fine. but three at 36 overloads. so it's like 15ms per sensor. that's not so good.
+###### sleeping
+SM: 5
+ST: 1388 (5 seconds)    -- stay awake this long for communication
+SP: 157C (55 seconds)   -- sleep for this long
+
+
 
 
 use `ls /dev/tty.*` to find devices

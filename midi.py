@@ -28,8 +28,9 @@ class MidiOut(threading.Thread):
             self.midi.open_port(self.port)
         else:
             log.info("MIDI OUT opening virtual output (\"Python\")...")
-            self.midi.open_virtual_port("Python")   
+            self.midi.open_virtual_port("Python")           
         self.start()   
+        time.sleep(0.5)
 
     def send_control(self, channel, control, value):
         self.queue.put((channel, (control, value), None))
@@ -79,7 +80,8 @@ class MidiIn(threading.Thread):
             log.info("No MIDI inputs available")
             return
         self.start()           
-
+        time.sleep(0.5)
+        
     def run(self):
         def receive_control(event, data=None):
             message, deltatime = event
@@ -107,6 +109,6 @@ class MidiIn(threading.Thread):
         self.callbacks[control] = f                
 
 
-midi_out = MidiOut(int(sys.argv[1]) if len(sys.argv) > 1 else 0)
-midi_in = MidiIn(int(sys.argv[2]) if len(sys.argv) > 2 else 0)
-time.sleep(1)
+# midi_out = MidiOut(int(sys.argv[1]) if len(sys.argv) > 1 else 0)
+# midi_in = MidiIn(int(sys.argv[2]) if len(sys.argv) > 2 else 0)
+# time.sleep(1)
