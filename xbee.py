@@ -6,10 +6,10 @@ from housepy import config, log
 
 class XBee(threading.Thread):
 
-    def __init__(self, device_name=None, baud=9600, message_handler=None, blocking=False):
+    def __init__(self, device_name=None, baud=9600, message_handler=None, blocking=False, verbose=False):
         threading.Thread.__init__(self)
         self.daemon = True
-        self.verbose = False
+        self.verbose = verbose
         self.message_handler = message_handler
         if device_name is None:
             for dn in os.listdir("/dev"):
