@@ -16,6 +16,9 @@ class XBee(threading.Thread):
                 if "tty.usbserial-" in dn:
                     device_name = os.path.join("/dev", dn)
                     break
+                if "ttyUSB" in dn:
+                    device_name = os.path.join("/dev", dn)
+                    break
             if device_name is None:
                 log.info("No devices available")
                 exit()
