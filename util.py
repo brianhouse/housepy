@@ -89,7 +89,7 @@ def parse_date(string, tz='UTC', dayfirst=False):
     date = None
     try:
         date = parser.parse(string, dayfirst=dayfirst)
-    except ValueError as e:
+    except (ValueError, AttributeError) as e:
         try:
             date = dt(int(string), tz=tz) # is it a timestamp? If not, raise original error.
         except ValueError:
