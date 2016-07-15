@@ -37,6 +37,12 @@ to check installed modules:
 
     pip3.5 freeze
 
+to get mongo as a daemon on startup:
+
+    cp /usr/local/Cellar/mongodb/3.2.4/homebrew.mxcl.mongodb.plist ~/Library/LaunchAgents/
+    launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mongodb.plist
+
+
 
 #### Ubuntu notes
 

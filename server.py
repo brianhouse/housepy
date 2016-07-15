@@ -63,21 +63,15 @@ class Application(tornado.web.Application):
         if 'server' in config:
             tornado_settings = config['server']
             for key in list(tornado_settings.keys()):
-                settings[key] = tornado_settings[key]        
+                settings[key] = tornado_settings[key]    
 
         tornado.web.Application.__init__(self, handlers, **settings)
-        
-        # # not ported or tested with Python 3
-        # if 'memcache' in config:
-        #     log.info("--> torando initializing memcache")
-        #     import memcache
-        #     self.cache = memcache.Client([config['memcache']['address'] + ":" + str(config['memcache']['port'])])
-            
-        self.jobs = None    
-        if 'beanstalk' in config:    
-            log.info("--> tornado initializing beanstalk")
-            import jobs
-            self.jobs = jobs.Jobs()  
+                    
+        # self.jobs = None    
+        # if 'beanstalk' in config:    
+        #     log.info("--> tornado initializing beanstalk")
+        #     import jobs
+        #     self.jobs = jobs.Jobs()  
                         
         Application.instance = self          
         
@@ -254,6 +248,7 @@ class Handler(tornado.web.RequestHandler):
                             "message": message,
                         })        
 
+
 authenticated = tornado.web.authenticated
 
 def start(handlers):
@@ -274,3 +269,5 @@ def start(handlers):
     http_server.listen(config['server']['port'])
     tornado.ioloop.IOLoop.instance().start()
     
+
+

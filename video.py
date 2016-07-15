@@ -116,7 +116,7 @@ class VideoPlayer(pyglet.window.Window, dispatcher.Dispatcher):
         dispatcher.Dispatcher.__init__(self)
         log.info("VideoPlayer %s" % filename)
         self.player = pyglet.media.Player()
-        source = pyglet.media.load(filename)
+        source = pyglet.media.load(filename)      ## this line causes the floating point exception
         self.player.queue(source)
         self.player.push_handlers(self)
         self.player.eos_action = self.player.EOS_PAUSE
@@ -218,8 +218,8 @@ class VideoPlayer(pyglet.window.Window, dispatcher.Dispatcher):
 
     def on_eos(self):
         log.info("VideoPlayer.on_eos")
-        self.on_close()
-        pyglet.app.exit()
+        # self.on_close()
+        # pyglet.app.exit()
 
     def on_close(self):
         log.info("VideoPlayer.on_close")

@@ -10,10 +10,10 @@ from housepy import config, log
 def upload(source, dest=None, num_processes=2, split=50, force=True, reduced_redundancy=False, verbose=False):
     if dest is None:
         dest = source
-    log.info("s3.upload %s to %s/%s..." % (source, config['aws']['bucket'], dest))
+    log.info("s3.upload %s to %s/%s..." % (source, config['s3']['bucket'], dest))
     src = open(source)
-    s3 = boto.connect_s3(config['aws']['access_key_id'], config['aws']['secret_access_key'])
-    bucket = s3.lookup(config['aws']['bucket'])
+    s3 = boto.connect_s3(config['s3']['access_key_id'], config['s3']['secret_access_key'])
+    bucket = s3.lookup(config['s3']['bucket'])
     key = bucket.get_key(dest)
     if key is not None:
         if not force:
@@ -78,7 +78,7 @@ def do_part_upload(args):
     """
 
     bucket_name, mpu_id, fname, i, start, size = args
-    s3 = boto.connect_s3(config['aws']['access_key_id'], config['aws']['secret_access_key'])
+    s3 = boto.connect_s3(config['s3']['access_key_id'], config['s3']['secret_access_key'])
     bucket = s3.lookup(bucket_name)
     mpu = None
     for mp in bucket.list_multipart_uploads():
@@ -104,10 +104,10 @@ def do_part_upload(args):
 
 def delete(path):
     log.info("s3.delete")        
-    conn = S3lib.AWSAuthConnection(config['aws']['access_key_id'], config['aws']['secret_access_key'])
-    log.info("--> deleting %s/%s" % (config['aws']['bucket'], path))        
+    conn = S3lib.AWSAuthConnection(config['s3']['access_key_id'], config['s3']['secret_access_key'])
+    log.info("--> deleting %s/%s" % (config['s3']['bucket'], path))        
     try:
-        response = conn.delete(config['aws']['bucket'], path)
+        response = conn.delete(config['s3']['bucket'], path)
     except Exception as e:
         log.error("--> failed: %s" % log.exc(e))
         return False
@@ -116,11 +116,11 @@ def delete(path):
     
 def list_contents():
     log.info("s3.list")
-    connection = boto.connect_s3(config['aws']['access_key_id'], config['aws']['secret_access_key'])
-    log.info("--> listing %s" % (config['aws']['bucket']))        
+    connection = boto.connect_s3(config['s3']['access_key_id'], config['s3']['secret_access_key'])
+    log.info("--> listing %s" % (config['s3']['bucket']))        
     try:
-        bucket = connection.get_bucket(config['aws']['bucket'])
-        contents = [key.name.encode('utf-8') for key in bucket.list()]
+        bucket = connection.get_bucket(config['s3']['bucket'])
+        contents = [key.name for key in bucket.list()]
     except Exception as e:
         log.error("--> failed: %s" % log.exc(e))
         return False
@@ -131,10 +131,10 @@ def download(path, destination=None):
     if destination is None:
         destination = path
     log.info("s3.download")        
-    connection = boto.connect_s3(config['aws']['access_key_id'], config['aws']['secret_access_key'])
-    log.info("--> downloading %s/%s" % (config['aws']['bucket'], path))        
+    connection = boto.connect_s3(config['s3']['access_key_id'], config['s3']['secret_access_key'])
+    log.info("--> downloading %s/%s" % (config['s3']['bucket'], path))        
     try:
-        bucket = connection.get_bucket(config['aws']['bucket'])
+        bucket = connection.get_bucket(config['s3']['bucket'])
         key = bucket.get_key(path)    
         key.get_contents_to_filename(destination)
     except Exception as e:
