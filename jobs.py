@@ -8,7 +8,7 @@ from .lib import beanstalkc
 beanstalk:
     address: 0.0.0.0
     port: 11238
-    bin: /opt/local/bin/beanstalkd
+    bin: /usr/local/bin/beanstalkd
     pid: /Users/house/Projects/openpaths/run/beanstalkd.pid
 
 """

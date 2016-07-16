@@ -31,6 +31,15 @@ DEFAULT_PRIORITY = 2 ** 31
 DEFAULT_TTR = 120
 
 
+PY3 = sys.version_info[0] > 2
+if PY3:
+    b = lambda x: isinstance(x, bytes) and x or bytes(x, 'us-ascii')
+    s = lambda x: x.decode('us-ascii')
+else:
+    b = lambda x: x
+    s = lambda x: x
+
+
 class BeanstalkcException(Exception): pass
 class UnexpectedResponse(BeanstalkcException): pass
 class CommandFailed(BeanstalkcException): pass
@@ -48,7 +57,7 @@ class SocketError(BeanstalkcException):
 
 class Connection(object):
     def __init__(self, host=DEFAULT_HOST, port=DEFAULT_PORT, parse_yaml=True,
-                 connect_timeout=socket.getdefaulttimeout()):
+                 connect_timeout=socket.getdefaulttimeout(), encoding=sys.getdefaultencoding()):
         if parse_yaml is True:
             try:
                 parse_yaml = __import__('yaml').load
@@ -57,6 +66,7 @@ class Connection(object):
                 parse_yaml = False
         self._connect_timeout = connect_timeout
         self._parse_yaml = parse_yaml or (lambda x: x)
+        self._encoding = encoding
         self.host = host
         self.port = port
         self.connect()
@@ -78,7 +88,7 @@ class Connection(object):
     def close(self):
         """Close connection to server."""
         try:
-            self._socket.sendall('quit\r\n')
+            self._socket.sendall(b('quit\r\n'))
         except socket.error:
             pass
         try:
@@ -92,7 +102,7 @@ class Connection(object):
         self.connect()
 
     def _interact(self, command, expected_ok, expected_err=[]):
-        SocketError.wrap(self._socket.sendall, command)
+        SocketError.wrap(self._socket.sendall, b(command))
         status, results = self._read_response()
         if status in expected_ok:
             return results
@@ -105,7 +115,7 @@ class Connection(object):
         line = SocketError.wrap(self._socket_file.readline)
         if not line:
             raise SocketError()
-        response = line.split()
+        response = s(line).split()
         return response[0], response[1:]
 
     def _read_body(self, size):
@@ -113,6 +123,8 @@ class Connection(object):
         SocketError.wrap(self._socket_file.read, 2)  # trailing crlf
         if size > 0 and not body:
             raise SocketError()
+        if PY3 and self._encoding:
+            body = body.decode(self._encoding)
         return body
 
     def _interact_value(self, command, expected_ok, expected_err=[]):
@@ -138,9 +150,14 @@ class Connection(object):
 
     def put(self, body, priority=DEFAULT_PRIORITY, delay=0, ttr=DEFAULT_TTR):
         """Put a job into the current tube. Returns job id."""
-        assert isinstance(body, str), 'Job body must be a str instance'
-        jid = self._interact_value('put %d %d %d %d\r\n%s\r\n' % (
-                                       priority, delay, ttr, len(body), body),
+        if not isinstance(body, str) and not isinstance(body, bytes):
+            raise ValueError('Job body must be a str or bytes instance')
+        if PY3 and isinstance(body, str):
+            if not self._encoding:
+                raise ValueError('Job body must be a bytes instance when no encoding is specified')
+            body = bytes(body, self._encoding)
+        jid = self._interact_value(b('put %d %d %d %d\r\n' % (priority, delay, ttr, len(body))) +
+                                   body + b('\r\n'),
                                    ['INSERTED'],
                                    ['JOB_TOO_BIG', 'BURIED', 'DRAINING'])
         return int(jid)
