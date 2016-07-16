@@ -123,8 +123,8 @@ class Connection(object):
         SocketError.wrap(self._socket_file.read, 2)  # trailing crlf
         if size > 0 and not body:
             raise SocketError()
-        if PY3 and self._encoding:
-            body = body.decode(self._encoding)
+        # if PY3 and self._encoding:            ## bh
+        #     body = body.decode(self._encoding)
         return body
 
     def _interact_value(self, command, expected_ok, expected_err=[]):
