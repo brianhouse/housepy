@@ -3,13 +3,13 @@
 from distutils.core import setup
 
 setup(
-    name='housepy',
-    version='0.0.1',
-    description='Personal utility library for Python 3',
-    author='Brian House',
-    url='https://github.com/brianhouse/housepy',
+    name="housepy",
+    version="0.0.1",
+    description="Personal utility library for Python 3",
+    author="Brian House",
+    url="https://github.com/brianhouse/housepy",
     py_modules=['housepy'],
-    package_dir={'housepy': ''},
+    package_dir={'housepy': ""},
     packages=['housepy'],
     install_requires=[
         'beautifulsoup4>=4.4.1',
