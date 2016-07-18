@@ -11,16 +11,15 @@ Jinja2 requires >= 3.3; other dependencies should work in 3.2
 
 Usage
 -----
-Place or symlink in your project directory.
 
     from housepy import log, config
 
 
 Installation
 ------------
-    sudo apt-get install python3-dev
-    sudo pip3.5 install -r requirements.txt
 
+    brew install python3
+    pip3 install .
 
 #### pycairo
 
@@ -31,6 +30,9 @@ Installation
 
     brew install rtmidi
 
+#### portaudio
+
+    brew install portaudio
 
 #### other
 to check installed modules:
@@ -41,7 +43,6 @@ to get mongo as a daemon on startup:
 
     cp /usr/local/Cellar/mongodb/3.2.4/homebrew.mxcl.mongodb.plist ~/Library/LaunchAgents/
     launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mongodb.plist
-
 
 
 #### Ubuntu notes
