@@ -8,6 +8,7 @@ setup(
     description='Personal utility library for Python 3',
     author='Brian House',
     url='https://github.com/brianhouse/housepy',
+    py_modules=['housepy'],
     package_dir={'housepy': ''},
     packages=['housepy'],
     install_requires=[
