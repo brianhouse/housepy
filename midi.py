@@ -9,10 +9,11 @@ log_midi = True
 
 class MidiOut(threading.Thread):
 
-    def __init__(self, port=0):
+    def __init__(self, port=0, throttle=0):
         threading.Thread.__init__(self)
         self.daemon = True
         self.port = port  
+        self.throttle = throttle
         self.queue = queue.Queue()
         self.midi = rtmidi.MidiOut()            
         available_ports = self.midi.get_ports()
@@ -58,6 +59,8 @@ class MidiOut(threading.Thread):
                     self.midi.send_message([NOTE_ON | (channel & 0xF), pitch & 0x7F, velocity & 0x7F])
                 else:
                     self.midi.send_message([NOTE_OFF | (channel & 0xF), pitch & 0x7F, 0])
+            if self.throttle > 0:
+                time.sleep(self.throttle)
 
 
 class MidiIn(threading.Thread):
