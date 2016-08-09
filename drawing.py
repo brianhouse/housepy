@@ -7,7 +7,8 @@ Simple drawing with cairo
 http://www.cairographics.org/samples/
 http://www.tortall.net/mu/wiki/CairoTutorial
 
-Flip does not work if relative=False
+known bugs:
+- flip does not work if relative=False
 
 """
 
