@@ -41,19 +41,20 @@ def plot(data, scatter=False, sample_axis=False, hsv=None, **args):
         args['c'] = colors.hsv_to_rgb(hsv[:3])
         if len(hsv) == 4:
             args['alpha'] = hsv[3]
+    if 'label' in args:
+        global legend
+        legend = True
+        args['label'] = args['label'].upper()
     if dimensions == 2:
         f(data[:,0], data[:,1], **args)
     if dimensions == 3:
         f(data[:,0], data[:,1], data[:,2], **args)
-    if 'label' in args:
-        global legend
-        legend = True
 
 def show(filename=None, labels=False):
 
     if not labels:
         # fix everything if in 3D mode
-        plt.subplots_adjust(left=0.0, right=1.0, bottom=0.0, top=1.0)
+        plt.subplots_adjust(left=0.0, right=1.1, bottom=0.0, top=1.0)
 
         # also do this if in 2d mode
         if not is_3d:
@@ -62,7 +63,7 @@ def show(filename=None, labels=False):
             frame1.axes.get_yaxis().set_visible(False)
 
     if legend:
-        plt.legend(loc="upper left")
+        plt.legend(loc="upper left", fontsize=8, prop={'family': "Monaco", 'weight': "roman", 'size': "x-small"})
 
     if filename is not None:
         if '.' not in filename:
