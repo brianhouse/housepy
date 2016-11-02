@@ -265,7 +265,7 @@ def start(handlers):
     if config['server']['port'] is None and len(sys.argv) > 1:
         config['server']['port'] = sys.argv[1]
     log.info("Starting tornado server on port %s" % config['server']['port'])
-    http_server = tornado.httpserver.HTTPServer(Application(handlers), ssl_options=ssl_options, xheaders=True)
+    http_server = tornado.httpserver.HTTPServer(Application(handlers), ssl_options=ssl_options, xheaders=True, max_buffer_size=209715200) # 200MB
     http_server.listen(config['server']['port'])
     tornado.ioloop.IOLoop.instance().start()
     

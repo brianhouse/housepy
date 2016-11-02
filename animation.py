@@ -13,6 +13,7 @@ Check http://cwru-hackers.googlecode.com/svn-history/r233/splatterboard/trunk/dr
 """
 
 MAX_OBJECTS = 20
+show_fps = True
 
 class Context(dispatcher.Dispatcher):
 
@@ -105,12 +106,12 @@ class Context(dispatcher.Dispatcher):
         pyglet.gl.glColor4f(1., 1., 1., 1.)      
         pyglet.gl.glTexParameteri(pyglet.gl.GL_TEXTURE_2D, pyglet.gl.GL_TEXTURE_MAG_FILTER, pyglet.gl.GL_NEAREST)                                                                                                                                       
         for t in self.textures:
-            t.blit(0, 0) # draw            
+            t.blit(t.x, t.y) # draw            
         self.draw_func()
         for o in self.objects:
             o.draw()
         fps = pyglet.clock.get_fps()
-        if fps < 30:
+        if fps < 30 and show_fps:
             print("%f fps" % fps)
 
     def pixels(self, pixels):        
@@ -181,7 +182,7 @@ class Context(dispatcher.Dispatcher):
     def label(self, x, y, text="", font="Helvetica", size=36, width=400, color=(0., 0., 0., 1.), center=False):
         # why is the antialiasing so awful
         color = [int(c * 255) for c in color] # why?
-        l = pyglet.text.HTMLLabel(text, x=x * self.width, y=y * self.height, width=width, multiline=True)
+        l = pyglet.text.Label(text, x=x * self.width, y=y * self.height, width=width, multiline=True, align=("center" if center else "left"))
         l.font_name = font
         l.font_size = size
         l.color = color
@@ -194,6 +195,8 @@ class Context(dispatcher.Dispatcher):
     def load_image(self, filename, x, y, width, height):
         image = pyglet.resource.image(filename)
         texture = image.get_texture()
+        texture.x = x
+        texture.y = y
         texture.width = width
         texture.height = height
         self.textures.append(texture)

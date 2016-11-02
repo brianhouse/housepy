@@ -13,7 +13,7 @@ beanstalk:
 
 """
 
-class Jobs(object): # having this in a class allows control over connection time
+class Jobs(object):
         
     def __init__(self):
         address = config['beanstalk']['address']
