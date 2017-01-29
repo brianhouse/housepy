@@ -9,6 +9,7 @@ import tornado.options
 import tornado.web
 import unicodedata
 import json as jsonlib
+import gzip as gziplib
 try:
     import jinja2
     from jinja2 import Environment, FileSystemLoader
@@ -152,7 +153,7 @@ class Handler(tornado.web.RequestHandler):
         else:
             self.text(output)          
         
-    def json(self, data, filename=False):
+    def json(self, data, filename=False, gzip=False):
         try:
             import numpy as np
         except Exception:    
@@ -160,6 +161,9 @@ class Handler(tornado.web.RequestHandler):
         else:    
             output = jsonlib.dumps(data, indent=4, default=lambda obj: str(obj) if type(obj) != np.ndarray else list(obj))
         self.set_header("Content-Type", "application/json")
+        if gzip:
+            output = gziplib.compress(output.encode('utf-8'))
+            self.set_header("Content-Encoding", "gzip")
         if filename:
             self.set_header("Content-Disposition", "attachment; filename=%s" % filename)
         self.write(output)
