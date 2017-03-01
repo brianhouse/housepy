@@ -1,33 +1,5 @@
 import re
-
-def format_time(seconds):
-    if type(seconds) != int:
-        seconds = float(seconds)
-    minutes = int(seconds // 60)
-    seconds = seconds - (minutes * 60)        
-    hours = minutes // 60
-    minutes = minutes - (hours * 60)        
-    days = int(hours // 24)
-    hours = int(hours - (days * 24))
-    time = []
-    if days:
-        time.append("%s:" % days)
-    if hours or days:
-        time.append("%s:" % str(hours).zfill(2))
-    if minutes or hours or days:
-        time.append("%s:" % str(minutes).zfill(2))
-    if type(seconds) == int:    
-        if not minutes and not hours and not days:
-            time.append(":%s" % str(seconds).zfill(2))        
-        elif seconds or minutes or hours or days:
-            time.append("%s" % str(seconds).zfill(2))
-    else:
-        if not minutes and not hours and not days:
-            time.append(":%s" % str("%f" % seconds).zfill(2))        
-        elif seconds or minutes or hours or days:
-            time.append("%s" % str("%f" % seconds).zfill(2))
-    time = "".join(time)               
-    return time
+from .timeutil import format_seconds as format_time
 
 def format_size(bytes):
     try:
