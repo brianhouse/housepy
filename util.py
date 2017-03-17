@@ -1,9 +1,9 @@
 import math, pickle, time, datetime, pytz, calendar
 from dateutil import parser
-from .timeutil import format_seconds as parse_date
+from .timeutil import string_to_dt as parse_date
 from .timeutil import t_utc as timestamp
 from .timeutil import get_string as datestring
-from .timeutil import string_to_dt as dt
+from .timeutil import get_dt as dt
 from .timeutil import t_to_utc as delocalize_timestamp
 
 def num_args(f):
