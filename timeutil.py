@@ -5,7 +5,7 @@
 import math, pickle, time, datetime, pytz, calendar
 from dateutil import parser
 
-def t_utc(dt=None, ms=False):
+def timestamp(dt=None, ms=False):
     """Return a UTC timestamp indicating the current time, or convert from a datetime. If datetime is naive, it's assumed to be UTC"""
     tz = pytz.timezone('UTC')
     if dt is None:
@@ -15,7 +15,7 @@ def t_utc(dt=None, ms=False):
     t = calendar.timegm(dt.timetuple()) # assumes UTC
     return int(t) if not ms else t + (dt.microsecond / 1000000.0)
 
-def get_string(t=None, tz='America/New_York', ms=False):
+def t_to_string(t=None, tz='America/New_York', ms=False):
     """Return a string with the formatted date from a UTC timestamp, convert to given tz"""
     if t is None:
         t = t_utc()
@@ -25,7 +25,7 @@ def get_string(t=None, tz='America/New_York', ms=False):
     datestring = dt.astimezone(pytz.timezone(tz)).strftime(format)
     return datestring
 
-def get_dt(t=None, tz='UTC'):
+def t_to_dt(t=None, tz='UTC'):
     """Get a datetime with the given tz from a UTC timestamp"""
     if t is None:
         t = t_utc()
@@ -47,7 +47,7 @@ def string_to_dt(string, tz='UTC', dayfirst=False):
         date = parser.parse(string, dayfirst=dayfirst)
     except (ValueError, AttributeError) as e:
         try:
-            date = get_dt(int(string), tz=tz) # is it a timestamp? If not, raise original error.
+            date = t_to_dt(int(string), tz=tz) # is it a timestamp? If not, raise original error.
         except ValueError:
             pass
         if date is None:
@@ -59,7 +59,7 @@ def string_to_dt(string, tz='UTC', dayfirst=False):
         date = date.astimezone(tz)
     return date
 
-def format_seconds(seconds):
+def seconds_to_string(seconds):
     if type(seconds) != int:
         seconds = float(seconds)
     minutes = int(seconds // 60)

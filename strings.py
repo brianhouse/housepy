@@ -1,5 +1,5 @@
 import re
-from .timeutil import format_seconds as format_time
+from .timeutil import seconds_to_string as format_time
 
 def format_size(bytes):
     try:

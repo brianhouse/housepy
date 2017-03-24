@@ -12,6 +12,20 @@ known bugs:
 
 """
 
+"""
+
+from housepy import drawing
+
+ctx = drawing.Context(1000, 1000, margin=50, hsv=True)
+
+ctx.line(0, 0, 1, 1, stroke=(0., 1., 1.), thickness=10)
+ctx.line(0, 1, 1, 0, stroke=(0., 1., 1.), thickness=10)
+ctx.arc(0.5, 0.5, 0.5, 0.5, stroke=(.55, 1., 1.), thickness=10)
+
+ctx.output()
+
+"""
+
 import colorsys, math, time, subprocess, os
 import cairocffi as cairo
 from . import util
