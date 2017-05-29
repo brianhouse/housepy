@@ -157,7 +157,7 @@ class Handler(tornado.web.RequestHandler):
         try:
             import numpy as np
         except Exception:    
-            output = jsonlib.dumps(data, indent=4, allow_nan=False, default=lambda obj: str(obj), allow_nan=False)               
+            output = jsonlib.dumps(data, indent=4, allow_nan=False, default=lambda obj: str(obj))
         else:    
             output = jsonlib.dumps(data, indent=4, allow_nan=False, default=lambda obj: str(obj) if type(obj) != np.ndarray else list(obj))
         self.set_header("Content-Type", "application/json")
