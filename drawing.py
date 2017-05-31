@@ -166,8 +166,6 @@ class Context(object):
         self._ctx.translate(center_x, center_y)  
         self._ctx.scale(radius_x, radius_y)
         self._ctx.arc(0.0, 0.0, 1.0, start, math.radians(end))
-        self._ctx.restore()
-        self._ctx.save()
 
         if self.relative:
             self._ctx.scale(1.0 / self.width, 1.0 / self.height)
@@ -179,6 +177,7 @@ class Context(object):
         self._ctx.stroke()            
         self._ctx.restore()                
         self._ctx.save()
+
 
     def label(self, x, y, text, stroke=(0., 0., 0., 1.), font="Monaco", size=12):
         x = self._mx(x)
@@ -200,7 +199,29 @@ class Context(object):
         self._ctx.restore()                
         self._ctx.save()
 
-    def output(self, filename=None):
+
+    def image(self, filename, x=0, y=None):
+        if y is None:
+            if self.relative:
+                y = 1 if self.flip else 0
+            else:
+                y = self.height if self.flip else 0
+        image = cairo.ImageSurface.create_from_png(filename)
+        if self.relative: 
+            self._ctx.scale(1.0 / self.width, 1.0 / self.height)    
+            x *= self.width
+            y *= self.height            
+        if self.flip:
+            self._ctx.scale(1, -1)
+            self._ctx.translate(0, -self.height)
+            y = self.height - y        
+        self._ctx.set_source_surface(image, x, y)
+        self._ctx.paint()        
+        self._ctx.restore()                
+        self._ctx.save()
+
+
+    def output(self, filename=None, open_file=True):
         self._ctx.stroke() # commit to surface
         if filename is None or '.' not in filename:
             if filename is None:
@@ -210,5 +231,6 @@ class Context(object):
                     os.makedirs(filename)
             filename = os.path.abspath(os.path.join(filename, "%s.png" % util.timestamp()))
         self._surface.write_to_png(filename) # write to file
-        subprocess.call(["open", filename])
+        if open_file:
+            subprocess.call(["open", filename])
 
