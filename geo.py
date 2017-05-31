@@ -14,14 +14,34 @@ def distance(pt0, pt1, miles=True):
         d *= 0.621371192
     return d
 
+
 def project(pt):
-    """ Project a (lon, lat) point to x,y space using the Mercator projection
-        http://wiki.openstreetmap.org/wiki/Mercator#Python_Implementation        
+    """ Project a (lon, lat) point to x,y space using the spherical Web Mercator projection
+        http://wiki.openstreetmap.org/wiki/Mercator#Python
     """    
-    def merc_x(lon):
-        r_major = 6378137.000
-        return r_major * math.radians(lon)
-    def merc_y(lat):
+    def lon_to_x(lon):
+        return 6378137 * math.radians(lon)
+    def lat_to_y(lat):
+        return 6378137 * math.radians(math.log(math.tan((lat / 90 + 1) * (math.pi / 4))) * (180 / math.pi))
+    return lon_to_x(pt[0]), lat_to_y(pt[1])
+
+
+def unproject(pt):
+    def x_to_lon(x):
+        return math.degrees(x / 6378137)
+    def y_to_lat(y):
+        y = math.degrees(y / 6378137)
+        return (math.atan(math.exp(y / (180 / math.pi))) / (math.pi / 4) - 1) * 90
+    return x_to_lon(pt[0]), y_to_lat(pt[1])
+
+
+def true_project(pt):
+    """ Project a (lon, lat) point to x,y space using the ellipsoid true Mercator projection
+        http://wiki.openstreetmap.org/wiki/Mercator#Python_implementation
+    """    
+    def lon_to_x(lon):
+        return 6378137 * math.radians(lon)
+    def lat_to_y(lat):
         if lat > 89.5:
             lat = 89.5
         if lat < -89.5:
@@ -38,7 +58,7 @@ def project(pt):
         ts = math.tan((math.pi / 2 - phi) / 2) / con
         y = (0 - r_major) * math.log(ts)
         return y 
-    return merc_x(pt[0]), merc_y(pt[1])   
+    return lon_to_x(pt[0]), lat_to_y(pt[1])   
 
 def geohash_encode(pt):
     """Geohash a point (lon, lat)"""
