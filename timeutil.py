@@ -15,7 +15,7 @@ def timestamp(dt=None, ms=False):
     t = calendar.timegm(dt.timetuple()) # assumes UTC
     return int(t) if not ms else t + (dt.microsecond / 1000000.0)
 
-def t_to_string(t=None, tz='America/New_York', ms=False):
+def t_to_string(t=None, tz='UTC', ms=False):
     """Return a string with the formatted date from a UTC timestamp, convert to given tz"""
     if t is None:
         t = t_utc()

@@ -1,4 +1,4 @@
-import math
+import math, geohash
 
 def distance(pt0, pt1, miles=True):
     """Return the distance between two points, specified (lon, lat), in miles (or kilometers)"""
@@ -60,15 +60,14 @@ def true_project(pt):
         return y 
     return lon_to_x(pt[0]), lat_to_y(pt[1])   
 
-def geohash_encode(pt):
+def geohash_encode(pt, precision=5):
     """Geohash a point (lon, lat)"""
-    import geohash
-    return geohash.encode(pt[1], pt[0])
+    return geohash.encode(pt[1], pt[0], precision)
     
 def geohash_decode(string):
     """Decode a geohash into a point (lon, lat)"""
-    import geohash
-    return geohash.decode(string)
+    lat, lon = geohash.decode(string)
+    return lon, lat
 
 def heading(pt0, pt1):
     """Returns the angle between two points, in degrees"""
