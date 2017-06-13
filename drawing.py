@@ -83,11 +83,14 @@ class Context(object):
         """Return the height of the drawing context."""        
         return self._height    
 
-    def line(self, x1, y1=None, x2=None, y2=None, stroke=(0.0, 0.0, 0.0, 1.0), thickness=1.0):
+    def line(self, x1, y1=None, x2=None, y2=None, stroke=(0.0, 0.0, 0.0, 1.0), thickness=1.0, dash=None):
         """Draw a line from x1,y1 to x2,y2, or between all points (as x,y pairs) in a list."""        
         stroke = self._handle_color(stroke)
         self._ctx.set_source_rgba(*stroke)
-        self._ctx.set_line_cap(cairo.LINE_CAP_SQUARE)        
+        self._ctx.set_line_cap(cairo.LINE_CAP_SQUARE)  
+        self._ctx.set_line_join(cairo.LINE_JOIN_MITER)
+        if dash is not None:
+            self._ctx.set_dash(dash)
         if type(x1) == tuple or type(x1) == list:
             self._ctx.move_to(self._mx(x1[0][0]), self._my(x1[0][1]))
             for point in x1[1:]:
