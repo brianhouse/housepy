@@ -59,7 +59,7 @@ def string_to_dt(string, tz='UTC', dayfirst=False):
         date = date.astimezone(tz)
     return date
 
-def seconds_to_string(seconds):
+def seconds_to_string(seconds, show_seconds=True, pm=False):
     if type(seconds) != int:
         seconds = float(seconds)
     minutes = int(seconds // 60)
@@ -68,6 +68,14 @@ def seconds_to_string(seconds):
     minutes = minutes - (hours * 60)        
     days = int(hours // 24)
     hours = int(hours - (days * 24))
+    suffix = "" if not pm else "am"
+    if pm and hours > 12:
+        hours -= 12
+        suffix = "pm"
+    elif pm and hours == 12:
+        suffix = "pm"
+    elif pm and hours == 0:
+        hours = 12
     time = []
     if days:
         time.append("%s:" % days)
@@ -75,15 +83,18 @@ def seconds_to_string(seconds):
         time.append("%s:" % str(hours).zfill(2))
     if minutes or hours or days:
         time.append("%s:" % str(minutes).zfill(2))
-    if type(seconds) == int:    
-        if not minutes and not hours and not days:
-            time.append(":%s" % str(seconds).zfill(2))        
-        elif seconds or minutes or hours or days:
-            time.append("%s" % str(seconds).zfill(2))
-    else:
-        if not minutes and not hours and not days:
-            time.append(":%s" % str("%f" % seconds).zfill(2))        
-        elif seconds or minutes or hours or days:
-            time.append("%s" % str("%f" % seconds).zfill(2))
-    time = "".join(time)               
-    return time
+    if show_seconds:
+        if type(seconds) == int:    
+            if not minutes and not hours and not days:
+                time.append(":%s" % str(seconds).zfill(2))        
+            elif seconds or minutes or hours or days:
+                time.append("%s" % str(seconds).zfill(2))
+        else:
+            if not minutes and not hours and not days:
+                time.append(":%s" % str("%f" % seconds).zfill(2))        
+            elif seconds or minutes or hours or days:
+                time.append("%s" % str("%f" % seconds).zfill(2))
+    time = "".join(time)
+    if not show_seconds:
+        time = time[:-1]               
+    return "%s %s" % (time, suffix)
