@@ -84,3 +84,10 @@ def load(filename):
     with open(filename, 'rb') as f:
         return pickle.load(f)
         
+def progress_bar(iteration):
+    percent = "%d" % (100 * (iteration / float(100)))
+    filled_length = int(100 * iteration // 100)
+    bar = '█' * filled_length + '-' * (100 - filled_length)
+    print("\r|%s| %s%%" % (bar, percent), end='\r')
+    if iteration == 100: 
+        print()
