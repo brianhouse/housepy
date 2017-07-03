@@ -37,8 +37,9 @@ class Context(object):
         self._width = float(width)
         self._height = float(height)
         self._hsv = hsv
-        margin_x = margin / self.width
-        margin_y = margin / self.height
+        self.relative = relative
+        margin_x = margin / self.width if self.relative else margin
+        margin_y = margin / self.height if self.relative else margin
         self._mx = (lambda x: x + margin_x) if not relative else (lambda x: (x * (1.0 - (2.0 * margin_x))) + margin_x)
         self._my = (lambda y: y + margin_y) if not relative else (lambda y: (y * (1.0 - (2.0 * margin_y))) + margin_y)
         self._surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
@@ -46,7 +47,6 @@ class Context(object):
         self._ctx.set_source_rgba(*background)
         self._ctx.rectangle(0, 0, self._width, self._height)
         self._ctx.fill()
-        self.relative = relative
         if self.relative:
             self._ctx.scale(self._width, self._height)
         else:
@@ -105,22 +105,8 @@ class Context(object):
         self._ctx.restore()                
         self._ctx.save()
 
-    def rect(self, x, y, width, height, stroke=(0.0, 0.0, 0.0, 1.0), thickness=1.0, fill=None):
-        """Draw a rectangle"""        
-        stroke = self._handle_color(stroke)
-        fill = self._handle_color(fill)        
-        self._ctx.set_source_rgba(*stroke)
-        self._ctx.set_line_cap(cairo.LINE_CAP_SQUARE)        
-        self._ctx.rectangle(self._mx(x), self._my(y), self._mx(x + width), self._my(y + height))
-        if self.relative:
-            self._ctx.scale(1.0 / self.width, 1.0 / self.height)
-        self._ctx.set_line_width(thickness)
-        if fill is not None:
-            self._ctx.set_source_rgba(*fill)
-            self._ctx.fill_preserve()        
-        self._ctx.stroke()
-        self._ctx.restore()                
-        self._ctx.save()        
+    def plot(self, signal, stroke=(0.0, 0.0, 0.0, 1.0), thickness=1.0):
+        self.line([(float(i) / len(signal), sample) for (i, sample) in enumerate(signal)], stroke=stroke, thickness=thickness)                
 
     def curve(self, x1, y1, xc, yc, x2, y2, stroke=(0.0, 0.0, 0.0, 1.0), thickness=1.0):
         """Draw a curve from x1,y1 to x2,y2 with control point xc, yc"""  
@@ -142,8 +128,24 @@ class Context(object):
         self._ctx.restore()                
         self._ctx.save()  
 
-    def plot(self, signal, stroke=(0.0, 0.0, 0.0, 1.0), thickness=1.0):
-        self.line([(float(i) / len(signal), sample) for (i, sample) in enumerate(signal)], stroke=stroke, thickness=thickness)        
+    def rect(self, x, y, width, height, stroke=(0.0, 0.0, 0.0, 1.0), thickness=1.0, fill=None):
+        """Draw a rectangle"""        
+        stroke = self._handle_color(stroke)
+        fill = self._handle_color(fill)        
+        self._ctx.set_line_cap(cairo.LINE_CAP_SQUARE)        
+        print(self._mx(x), x)
+        print(self._mx(x + width), x + width)
+        self._ctx.rectangle(self._mx(x), self._my(y), self._mx(x + width), self._my(y + height))
+        if self.relative:
+            self._ctx.scale(1.0 / self.width, 1.0 / self.height)
+        self._ctx.set_line_width(thickness)
+        if fill is not None:
+            self._ctx.set_source_rgba(*fill)
+            self._ctx.fill_preserve()     
+        self._ctx.set_source_rgba(*stroke)               
+        self._ctx.stroke()
+        self._ctx.restore()                
+        self._ctx.save()        
 
     def arc(self, center_x, center_y, radius_x=None, radius_y=None, start=0, end=360, stroke=(0.0, 0.0, 0.0, 1.0), thickness=1.0, fill=None):
         """ Draw an arc / ellipse / circle / pieslice. 'start' and 'end' are angles in degrees; 0 is 3:00 and degrees move clockwise.
@@ -166,17 +168,20 @@ class Context(object):
         center_x = self._mx(center_x)
         center_y = self._my(center_y)
 
+        self._ctx.save()
         self._ctx.translate(center_x, center_y)  
         self._ctx.scale(radius_x, radius_y)
         self._ctx.arc(0.0, 0.0, 1.0, start, math.radians(end))
 
         if self.relative:
+            self._ctx.restore()
             self._ctx.scale(1.0 / self.width, 1.0 / self.height)
-        self._ctx.set_line_width(thickness)
         if fill is not None:
             self._ctx.set_source_rgba(*fill)
             self._ctx.fill_preserve()
-        self._ctx.set_source_rgba(*stroke)
+        self._ctx.set_line_width(thickness)            
+        self._ctx.set_source_rgba(*stroke) 
+
         self._ctx.stroke()            
         self._ctx.restore()                
         self._ctx.save()
