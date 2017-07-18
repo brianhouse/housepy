@@ -28,7 +28,7 @@ def t_to_string(t=None, tz='UTC', ms=False):
 def t_to_dt(t=None, tz='UTC'):
     """Get a datetime with the given tz from a UTC timestamp"""
     if t is None:
-        t = t_utc()
+        t = timestamp()
     utc_z = pytz.timezone('UTC')
     dt = utc_z.localize(datetime.datetime.utcfromtimestamp(t))
     dt = dt.astimezone(pytz.timezone(tz))

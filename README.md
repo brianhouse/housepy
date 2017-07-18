@@ -52,10 +52,12 @@ To install pip for python3 on Ubuntu, install easy_install3 first:
     sudo apt-get install easy_install3
     sudo easy_install3 pip
 
-numpy and scipy must be installed through apt-get:
+numpy, scipy, matplotlib, and cairo must be installed through apt-get:
 
     sudo apt-get install python3-numpy
     sudo apt-get install python3-scipy
+    sudo apt-get install python3-matplotlib
+    sudo apt-get install python3-cairocffi
 
 
 ### Copyright/License
