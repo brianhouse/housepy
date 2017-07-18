@@ -68,11 +68,11 @@ class Application(tornado.web.Application):
 
         tornado.web.Application.__init__(self, handlers, **settings)
                     
-        # self.jobs = None    
-        # if 'beanstalk' in config:    
-        #     log.info("--> tornado initializing beanstalk")
-        #     import jobs
-        #     self.jobs = jobs.Jobs()  
+        self.jobs = None    
+        if 'beanstalk' in config:    
+            log.info("--> tornado initializing beanstalk")
+            from . import jobs
+            self.jobs = jobs.Jobs()  
                         
         Application.instance = self          
         
